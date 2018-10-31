@@ -1,0 +1,5 @@
+<launch>
+  <node pkg="communication_to_windows" name="communication_to_win" type="communication_to_win"/>
+  <node pkg="beego_teleop" name="keyboard_teleop" type="keyboard_teleop"/ output="screen">
+  <node pkg="turtlesim" name="turtle_teleop_key" type="turtle_teleop_key"/>
+</launch>

@@ -1,10 +1,5 @@
 #include"ros/ros.h"
 #include <ros/callback_queue.h>
-#include <sensor_msgs/PointCloud2.h>
-#include<image_transport/image_transport.h>
-#include<cv_bridge/cv_bridge.h>
-#include<opencv2/highgui/highgui.hpp>
-#include<opencv2/imgproc/imgproc.hpp>
 
 #include<command_generation/cluster_with_vel.h>
 #include<wheel_control/wheel_msg.h>

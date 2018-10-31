@@ -406,15 +406,22 @@ void detect_objects::set_cluster(void){
 			//Be able to convert to grid map cell
 			if(p2i[w*ch2i][0]!=0 || p2i[w*ch2i][1]!=0){
 				//get cluster num
+				std::cout<<"p2i[w*ch2i][0,1:"<<p2i[w*ch2i][0]<<","<<p2i[w*ch2i][1]<<"\n";
 				int *pc=cluster_num.ptr<int>(p2i[w*ch2i][1]);
 				int cn=pc[p2i[w*ch2i][0]*chcn];
 				std::cout<<"("<<w<<","<<h<<","<<p3d[w*ch3d][0]<<"):"
 					<<"("<<cn<<","<<cluster_k[cn]<<"):("
 					<<cluster_k.size()<<","<<cluster_count[cn]<<")\n";
+				std::cout<<"(cluster_size,cn)--(cluster_count["<<cn<<"],cluster_k[cn]):("
+					<<cluster_size<<","<<cn<<")--("<<cluster_count[cn]<<","<<cluster_k[cn]<<")\n";
 				Q.clst[cn].pt[cluster_k[cn]].x=w;
+				std::cout<<"Q.clst[cn].pt[cluster_k[cn]].x=w;\n";
 				Q.clst[cn].pt[cluster_k[cn]].y=h;
+				std::cout<<"Q.clst[cn].pt[cluster_k[cn]].y=h;\n";
 				Q.clst[cn].pt[cluster_k[cn]].z=p3d[w*ch3d][0];
+				std::cout<<"Q.clst[cn].pt[cluster_k[cn]].z=p3d[w*ch3d][0];\n";
 				cluster_k[cn]++;
+				std::cout<<"	cluster_k[cn]++;\n";
 			}
 		}
 	}

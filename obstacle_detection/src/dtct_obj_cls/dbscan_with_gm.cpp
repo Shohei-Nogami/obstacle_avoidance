@@ -224,7 +224,7 @@ void detect_objects::create_grid_map(void){
 	int ch3d=img_3d.channels();
 
 	index_to_gm=cv::Mat::zeros(cv::Size(W,H), CV_32SC2);//in header
-
+	index_to_gm-=1;
 	int ch2i=index_to_gm.channels();
 	//cv::Mat grid_map=cv::Mat::zeros(cv::Size(W,H), CV_32SC1);;
 	grid_map=cv::Mat::zeros(cv::Size((int)(map_wf/reso),(int)(map_hf/reso)), CV_32SC1);
@@ -262,10 +262,12 @@ void detect_objects::create_grid_map(void){
 				p2i[w][0]=xg;
 				p2i[w][1]=yg;
 			}
+			/*
 			else{
 				p2i[w][0]=0;
 				p2i[w][1]=0;
 			}
+			*/
 		}
 	}
 }
@@ -428,6 +430,7 @@ void detect_objects::dbscan_with_gm(void){
 				task_point[1][task_size++]=h;
 				//set cluster_num
 				pc[w*chc]=cluster_size;
+				cluster_count[cluster_size]+=pg[w];
 				for(int k=0;k<task_size;k++){
 					//candidate points
 					int cand_num[sr*sr];
@@ -437,69 +440,83 @@ void detect_objects::dbscan_with_gm(void){
 					//std::cout<<"task_point["<<k<<"]:"<<task_point[0][k]<<","<<task_point[1][k]<<"\n";
 					//search r_max4
 					for(int ks=0;ks<sr*sr;ks++){
-							int h_ks=ks/sr;
-							int w_ks=ks%sr;
-							//int hs=h_ks-sr/2+h;
-							//int ws=w_ks-sr/2+w;
-							int hs=h_ks-sr/2+task_point[1][k];
-							int ws=w_ks-sr/2+task_point[0][k];
-							if(0 > hs || hs > H ||0 > ws || ws> W)
-							{
-								continue;
+						int h_ks=ks/sr-sr/2;
+						int w_ks=ks%sr-sr/2;
+						//std::cout<<"h_ks,w_ks:"<<h_ks<<","<<w_ks<<"\n";
+						//int hs=h_ks-sr/2+h;
+						//int ws=w_ks-sr/2+w;
+						int hs=h_ks+task_point[1][k];
+						int ws=w_ks+task_point[0][k];
+						if(0 > hs || hs > H ||0 > ws || ws> W || (h_ks==0&&w_ks==0) )
+						{
+							continue;
+						}
+						//select 2 ways
+						//1
+						int *pg_ks=grid_map.ptr<int>(hs);
+						int *pc_ks=cluster_num.ptr<int>(hs);
+						//2
+						/*int *pg_ks; 
+						int *pc_ks;
+						if(!w_ks){
+							*pg_ks=grid_map.ptr<int>(hs);
+							*pc_ks=cluster_num.ptr<int>(hs);
+						}
+						*/
+						//
+						if(pg_ks[ws]>0){
+							//add density
+							dens+=pg_ks[ws];
+							//record candidate point
+							//if(!pc_ks[ws*chc]){
+							if(pc_ks[ws]==-1){
+								//std::cout<<"dens:"<<dens<<"\n";
+								//std::cout<<"cand_size:"<<cand_size<<"\n";
+								cand_num[cand_size++]=ks;
 							}
-							//select 2 ways
-							//1
-							int *pg_ks=grid_map.ptr<int>(hs);
-							int *pc_ks=cluster_num.ptr<int>(hs);
-							//2
-							/*int *pg_ks;
-							int *pc_ks;
-							if(!w_ks){
-								*pg_ks=grid_map.ptr<int>(hs);
-								*pc_ks=cluster_num.ptr<int>(hs);
-							}
-							*/
-							//
-							if(pg_ks[ws*chg]>0){
-								//add density
-								dens+=pg_ks[ws*chg];
-								//record candidate point
-								//if(!pc_ks[ws*chc]){
-								if(pc_ks[ws*chc]==-1){
-									std::cout<<"dens:"<<dens<<"\n";
-									std::cout<<"cand_size:"<<cand_size<<"\n";
-									cand_num[cand_size++]=ks;
-								}
-							}
+						}
 					}
 					//check density value
 					//density_threshold
 					//float win_size=reso*reso*ks;
 					//float density=dens/win_size;
 					//float density_th=10.0/(0.1*0.1);
-					std::cout<<"dens:"<<dens<<"\n";
+					//std::cout<<"dens:"<<dens<<"\n";
 					int density_th_i=10;//temp
 					if(dens>density_th_i){
 						//true
 						//add candidate points to task points
+						/*
 						for(int ks=0;ks<cand_size;ks++){
 							task_point[0][task_size]=ks%sr-sr/2+w;
 							task_point[1][task_size++]=ks/sr-sr/2+h;
 						}
+						*/
+						for(int ks=0;ks<cand_size;ks++){
+							task_point[0][task_size]=ks%sr-sr/2+task_point[0][k];
+							task_point[1][task_size++]=ks/sr-sr/2+task_point[1][k];
+							
+						}
+						
 						//add searching point to cluster
 						//-->set cluster number to
 						// int hs=;
 						// int ws=w_ks-sr/2+w;
 						int *pc_ks=cluster_num.ptr<int>(task_point[1][k]);
-						pc_ks[task_point[0][k]*chc]=cluster_size;
-						cluster_count[cluster_size]+=dens;
+						pc_ks[task_point[0][k]]=cluster_size;
+						//cluster_count[cluster_size]+=dens;//要確認
+						int *pg_ks=grid_map.ptr<int>(task_point[1][k]);
+						cluster_count[cluster_size]+=pg_ks[task_point[0][k]];
+					
 					}
+					/*
 					else{
 						//false
 						continue;
 					}
+					*/
 				}//task loop end
-
+				//std::cout<<"task_size:"<<task_size<<"\n";
 				//All task were searched
 				cluster_size++;
 			}
@@ -574,11 +591,15 @@ void detect_objects::set_cluster(void){
 				std::cout<<"	cluster_k[cn]++;\n";
 			}
 			*/
-			if(p2i[w][0]!=0 || p2i[w][1]!=0){
+			//if(p2i[w][0]!=0 || p2i[w][1]!=0){
+			if(p2i[w][0]==-1 || p2i[w][1]==-1){
+				continue;
+			}
+			else{
 				//get cluster num
 				//std::cout<<"p2i[w][0,1:"<<p2i[w][0]<<","<<p2i[w][1]<<"\n";
 				int *pc=cluster_num.ptr<int>(p2i[w][1]);
-				int cn=pc[p2i[w][0]*chcn];
+				int cn=pc[p2i[w][0]];
 				//std::cout<<"("<<w<<","<<h<<","<<p3d[w][0]<<"):"
 				//	<<"("<<cn<<","<<cluster_k[cn]<<"):("
 				//	<<cluster_k.size()<<","<<cluster_count[cn]<<")\n";
@@ -599,6 +620,7 @@ void detect_objects::set_cluster(void){
 	for(int i=0;i<Q.clst.size();i++){
 		Q.clst[i].pt.resize(cluster_k[i]);
 		Q.clst[i].fpt.resize(cluster_k[i]);
+		//std::cout<<"cluster_k["<<i<<"],cluster_count["<<i<<"]:"<<cluster_k[i]<<","<<cluster_count[i]<<"\n";
 	}
 }
 /*
@@ -636,7 +658,15 @@ cv::Mat& detect_objects::draw_grid_map(cv::Mat& tmp_grid_map){
 	//cv::Mat grid_color_img=cv::Mat::zeros(cv::Size(W,H), CV_8UC3);
 	grid_color_img=cv::Mat::zeros(cv::Size(W,H), CV_8UC3);
 	int chgc=grid_color_img.channels();
-
+	
+	float point_all=0;
+	for(int h=0;h<H;h++){
+		int *pg=grid_map.ptr<int>(h);
+		for(int w=0;w<W;w++){
+			point_all+=pg[w];
+		}
+	}
+	
 	for(int h=0;h<H;h++){
 		int *pg=grid_map.ptr<int>(h);
 		cv::Vec3b *pgc=grid_color_img.ptr<cv::Vec3b>(h);
@@ -651,18 +681,26 @@ cv::Mat& detect_objects::draw_grid_map(cv::Mat& tmp_grid_map){
 			pgc[w][0]=0;
 			pgc[w][1]=0;
 			pgc[w][2]=0;
+			int grid_data=(int)(pg[w]/point_all*765)*3;
 			
 			//RGB>GB>B>black:765>510>255>0
 			for(int color=0;color<3;color++){
 				//color:0,1,2-->B,G,R
 				//pgc[w*chgc][color]=pg[w*chg]-255*color;
 				//std::cout<<"pg["<<w<<"]:"<<pg[w]<<"\n";
-				if(pg[w]>765){
-					pg[w]=765;
+				if(grid_data>765){
+					grid_data=765;
 				}
-				pgc[w][color]=pg[w]-255*color;
+				if((grid_data-255*color)%255<0){
+					pgc[w][color]=0;
+				}
+				pgc[w][color]=(grid_data-255*color)%255;
 			}
-
+			/*
+			if(grid_data){
+				std::cout<<pg[w]<<"--("<<(pg[w]-255*0)%255<<","<<(pg[w]-255*1)%255<<","<<(pg[w]-255*2)%255<<")\n";
+			}
+			*/
 		}
 	}
 	return grid_color_img;

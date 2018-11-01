@@ -393,7 +393,15 @@ void detect_objects::draw_cluster(void)
 	clusted_cloud->points.reserve(width*height);
 	
 	for(int k=0;k<Q.clst.size();k++)
+//	for(int k=0;k<12;k++)
 	{
+		std::cout<<"k,point:"<<k<<","<<Q.clst[k].pt.size()<<"\n";
+		if((int)Q.clst[k].pt.size()<100){
+			continue;
+		}
+		if(j>3){
+			break;
+		}
 		/*
 		if(Q.clst[k].size<0.1*0.1)//||Q.clst[i].size>1.0*1.0)
 		{

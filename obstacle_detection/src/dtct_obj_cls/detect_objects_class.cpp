@@ -39,11 +39,11 @@ detect_objects::detect_objects()
 
 	filted_image=cv::Mat::zeros(cv::Size(width,height), CV_32FC1);
 
-	map_wf=10;
-	map_hf=10;
+	map_wf=8;
+	map_hf=8;
 	reso=0.1;
 	cx=0;
-	cy=0;
+	cy=map_hf/2.0;
 
 	img_3d=cv::Mat::zeros(cv::Size(width,height), CV_32FC3);
 	index_to_gm=cv::Mat::zeros(cv::Size(width,height), CV_32SC2);
@@ -138,7 +138,7 @@ int main(int argc,char **argv){
 	float x,z;
 	int nx,nz;
 	bool tf;
-	bool WITH_GRIDMAP=false;
+	bool WITH_GRIDMAP=true;
 	while(ros::ok()){
 
 		std::cout<<"process_start:"<<time_cls.get_time_now()<<"\n";
@@ -200,17 +200,22 @@ int main(int argc,char **argv){
 
 			dtct_obj.create_grid_map();
 			std::cout<<"9:create_grid_map:"<<time_cls.get_time_now()<<"\n";
+			
 			dtct_obj.dbscan_with_gm();
 			std::cout<<"9:dbscan_with_gm:"<<time_cls.get_time_now()<<"\n";
 			dtct_obj.set_cluster();
 			std::cout<<"9:set_cluster:"<<time_cls.get_time_now()<<"\n";
+			
+			img_cls.publish_debug_image(dtct_obj.draw_grid_map(dtct_obj.get_grid_map()) );
 		}
 		//img_cls.publish_debug_image( dtct_obj.draw_cluster(img_cls.get_cur_image_by_ref() ) );
+		
 		dtct_obj.draw_cluster();
 
 
 		std::cout<<"dt:"<<time_cls.get_delta_time()<<"\n";
 		dtct_obj.publish_cluster(odm_cls.get_velocity(),odm_cls.get_angular_velocity(),time_cls.get_delta_time());
+		
 		dtct_obj.publish_response();
 	}
 

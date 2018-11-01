@@ -93,6 +93,8 @@ class detect_objects{
 		time_class tm_cls;
 	//--response msg
 		std_msgs::Empty emptymsg;
+	//--debug image
+		cv::Mat grid_color_img;
 	public:
 		detect_objects();
 		~detect_objects();
@@ -115,7 +117,8 @@ class detect_objects{
 		void dbscan_with_gm(void);
 		cv::Mat& get_grid_map(void);
 		void set_cluster(void);
-		void draw_grid_map(cv::Mat& tmp_grid_map);
+		//void draw_grid_map(cv::Mat& tmp_grid_map);
+		cv::Mat& draw_grid_map(cv::Mat& tmp_grid_map);
 	//---GROUND ESTIMATE
 		void ground_estimation_from_image(const float& y_th,const float& cam_y,float& a,float& b,float& c,float& d);
 

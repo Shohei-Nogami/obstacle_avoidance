@@ -336,7 +336,7 @@ cv::Mat& detect_objects::draw_cluster(cv::Mat& image)
 }
 void detect_objects::draw_cluster(void)
 {
-	
+
 	float colors[12][3] ={{255,0,0},{0,255,0},{0,0,255},{255,255,0},{0,255,255},{255,0,255},{127,255,0},{0,127,255},{127,0,255},{255,127,0},{0,255,127},{255,0,127}};//色リスト
 	pcl::PointCloud<pcl::PointXYZRGB>::Ptr clusted_cloud(new  pcl::PointCloud<pcl::PointXYZRGB>);
 	clusted_cloud->points.clear();
@@ -391,17 +391,17 @@ void detect_objects::draw_cluster(void)
 
 	clusted_cloud->points.clear();
 	clusted_cloud->points.reserve(width*height);
-	
+
 	for(int k=0;k<Q.clst.size();k++)
 //	for(int k=0;k<12;k++)
 	{
-		std::cout<<"k,point:"<<k<<","<<Q.clst[k].pt.size()<<"\n";
-		if((int)Q.clst[k].pt.size()<100){
-			continue;
-		}
-		if(j>3){
-			break;
-		}
+		// std::cout<<"k,point:"<<k<<","<<Q.clst[k].pt.size()<<"\n";
+		// if((int)Q.clst[k].pt.size()<100){
+		// 	continue;
+		// }
+		// if(j>3){
+		// 	break;
+		// }
 		/*
 		if(Q.clst[k].size<0.1*0.1)//||Q.clst[i].size>1.0*1.0)
 		{
@@ -440,7 +440,7 @@ void detect_objects::draw_cluster(void)
 	sensor_msgs::PointCloud2 edit_cloud2;
 	pcl::toROSMsg (*clusted_cloud, edit_cloud2);
 	//edit_cloud.header.frame_id="/zed_current_frame";
-	edit_cloud2.header.frame_id="/zed_current_frame";//"/zed_camera_center";
+	edit_cloud2.header.frame_id="/zed_camera_center";
 	pc_pub2.publish(edit_cloud2);
 }
 

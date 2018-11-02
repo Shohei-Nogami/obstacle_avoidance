@@ -86,6 +86,7 @@ class detect_objects{
 		cv::Mat index_to_gm;
 		cv::Mat grid_map;
 		cv::Mat cluster_num;
+		cv::Mat candidate_map;
 		int cluster_size;
 		std::vector<int> cluster_count;
 		//

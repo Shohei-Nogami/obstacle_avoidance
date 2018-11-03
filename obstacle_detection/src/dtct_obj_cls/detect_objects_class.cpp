@@ -41,7 +41,7 @@ detect_objects::detect_objects()
 
 	map_wf=8;
 	map_hf=8;
-	reso=0.02;
+	reso=0.05;
 	cx=0;
 	cy=map_hf/2.0;
 

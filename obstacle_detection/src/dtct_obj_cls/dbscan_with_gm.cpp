@@ -427,9 +427,11 @@ void detect_objects::dbscan_with_gm(void){
 			if(pg[w]>0)
 			{
 				//culc density
-				float reso=0.02;//0.1;
-				float search_range=0.2;
-				int sr=3;//(int)(search_range/reso);
+				float aspect_ratio=3;
+				float search_range=0.4;//search window size
+				int sr=(int)(search_range*2/reso);
+				int srh=(int)(search_range*2/reso/aspect_ratio);
+				int srw=(int)(search_range*2/reso);
 				//set task point
 				task_size=0;
 				task_point[0][task_size]=w;
@@ -442,15 +444,19 @@ void detect_objects::dbscan_with_gm(void){
 				// cluster_count[cluster_size]+=pg[w];
 				for(int k=0;k<task_size;k++){
 					//candidate points
-					int cand_num[sr*sr];
+					// int cand_num[sr*sr];
+					int cand_num[srw*srh];
 					int cand_size=0;
 					//density
 					int dens=0;
 					//std::cout<<"task_point["<<k<<"]:"<<task_point[0][k]<<","<<task_point[1][k]<<"\n";
 					//search r_max4
-					for(int ks=0;ks<sr*sr;ks++){
-						int h_ks=ks/sr-sr/2;
-						int w_ks=ks%sr-sr/2;
+					// for(int ks=0;ks<sr*sr;ks++){
+					// 	int h_ks=ks/sr-sr/2;
+					// 	int w_ks=ks%sr-sr/2;
+					for(int ks=0;ks<srh*srw;ks++){
+						int h_ks=ks/srw-srh/2;
+						int w_ks=ks%srw-srw/2;
 						//std::cout<<"h_ks,w_ks:"<<h_ks<<","<<w_ks<<"\n";
 						//int hs=h_ks-sr/2+h;
 						//int ws=w_ks-sr/2+w;
@@ -493,7 +499,10 @@ void detect_objects::dbscan_with_gm(void){
 					//float density=dens/win_size;
 					//float density_th=10.0/(0.1*0.1);
 					//std::cout<<"dens:"<<dens<<"\n";
-					int density_th_i=100;//temp
+					// int density_th_i=800;//tem
+					float y=map_hf-task_point[1][k]*reso;
+					int density_th_i=(int)( -35*y*y+1200 );
+					// int density_th_i=(int)( -300*y+1400 );
 					if(dens>density_th_i){
 						//true
 						//add candidate points to task points
@@ -507,8 +516,10 @@ void detect_objects::dbscan_with_gm(void){
 							// std::cout<<"can(size,num):"<<cand_size<<","<<ks<<","<<cand_num[ks]<<"\n";
 							// std::cout<<"tasksize,k,x,y:"<<task_size<<","<<k<<"\n";
 							// std::cout<<task_point[0][k]<<","<<task_point[1][k]<<"\n";
-							task_point[0][task_size]=cand_num[ks]%sr-sr/2+task_point[0][k];
-							task_point[1][task_size++]=cand_num[ks]/sr-sr/2+task_point[1][k];
+							// task_point[0][task_size]=cand_num[ks]%sr-sr/2+task_point[0][k];
+							// task_point[1][task_size++]=cand_num[ks]/sr-sr/2+task_point[1][k];
+							task_point[0][task_size]=cand_num[ks]%srw-srw/2+task_point[0][k];
+							task_point[1][task_size++]=cand_num[ks]/srw-srh/2+task_point[1][k];
 
 						}
 						// std::cout<<"add searching point to cluster\n";
@@ -634,6 +645,7 @@ void detect_objects::set_cluster(void){
 				//std::cout<<"Q.clst[cn].pt[cluster_k[cn]].y=h;\n";
 				Q.clst[cn].pt[cluster_k[cn]].z=p3d[w][0];
 				//std::cout<<"Q.clst[cn].pt[cluster_k[cn]].z=p3d[w][0];\n";
+				Q.clst[cn].size+=p3d[w][0]*p3d[w][0]/(f*f);
 				cluster_k[cn]++;
 				//std::cout<<"	cluster_k[cn]++;\n";
 			}

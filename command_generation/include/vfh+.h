@@ -41,7 +41,9 @@ class vfh{
 		float th_t;//robot angular
 		float max_w;//robot angular speed (max)
 		float mv_t;//movement time(dt)
-		
+		//vfh param
+		int min_range,max_range;
+		float reso_range;
     	std::vector<float> ph;
 	public:
 	
@@ -71,8 +73,6 @@ class vfh{
         float select_angle(void);
         //controler
 		virtual void set_command_vel(float angle,float& v,float& w);
-		virtual void draw_path_mat(void);
-		
 		//debug
         virtual void draw_path_mat(void);
 		void set_pub_debug_images(void);

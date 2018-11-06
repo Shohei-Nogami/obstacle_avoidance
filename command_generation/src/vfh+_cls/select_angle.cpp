@@ -14,22 +14,23 @@ void vfh::set_polor_histogram(void){
 			if(pg[w]>0){
 				float d,th;
 				trans_point_grid_to_polor(w,h,d,th);
-				if(th<min_angle||th>max_angle){
+				if(th<min_range||th>max_range){
 					continue;
 				}
 				//障害物とロボットの大きさを考慮する必要がある(未実装)
 				//trans th(float) to thi(int)
-				int thi=(int)(th-min_angle);
+				int thi=(int)(th-max_range);
 				if(ph[thi]<0 || ph[thi]>d){
 					ph[thi]=d;
 				}
 			}
 		}
+	}
 }
 
 float vfh::select_angle(void){
 
-	int select_angle=min_angle+(max_angle-min_angle)/2;//center angle
+	int select_angle=min_range+(max_range-min_range)/2;//center angle
 	float min_ev=MAX_EV;//evaluation value
 	float block_d=1*1;//block distance^2
 	float w1=1;
@@ -40,13 +41,12 @@ float vfh::select_angle(void){
 		if(block_d>ph[i]){
 			continue;
 		}
-		ev=
-			+w1*std::abs( min_angle+i*reso_range - std::atan(-(xgf.x-xrf.x)/(xgf.y-xrf.y)) )//論文第1項
+		float ev=+w1*std::abs(min_range+i*reso_range - std::atan(-(xgf.x-xrf.x)/(xgf.y-xrf.y)) )//論文第1項
 			+w2*std::abs(th_t-ph[i]*reso_range)//論文第2項
 			-w3*ph[i];//追加した評価式
 		if(min_ev>ev){
 			min_ev=ev;
-			select_angle=min_angle+i;
+			select_angle=min_range+i;
 		}
 	}
 	return (float)(select_angle*reso_range);

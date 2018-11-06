@@ -213,9 +213,14 @@ include_directories(
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
 
-add_executable(command_generation src/avoid_cls/avoid_cls.cpp src/vfh+_cls/vfh+_class.cpp src/tm_cls/time_class.cpp )
-target_link_libraries(command_generation ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+#add_executable(command_generation src/avoid_cls/avoid_cls.cpp src/vfh+_cls/vfh+_class.cpp src/tm_cls/time_class.cpp )
+#target_link_libraries(command_generation ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
+add_executable(vfh_test src/vfh+_cls/vfh+_test.cpp src/vfh+_cls/vfh+.cpp 
+  src/tm_cls/time_class.cpp src/vfh+_cls/controler.cpp src/vfh+_cls/coordinate_convert.cpp
+  src/vfh+_cls/debug.cpp src/vfh+_cls/grid_map.cpp src/vfh+_cls/select_angle.cpp
+  src/vfh+_cls/set_param.cpp )
+target_link_libraries(vfh_test ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)

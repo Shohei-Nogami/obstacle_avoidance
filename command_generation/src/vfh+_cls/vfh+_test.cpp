@@ -6,7 +6,7 @@ int main(int argc,char **argv)
 	ros::init(argc,argv,"vfh_test");
 	
 	//vfh
-	vfh vfh(100,100,0.01);
+	vfh vfh(8,8,0.01);
 	//or
 	//vfh vfh;
 	//vfh.set_grid_param(10,10,0.1);//10,10,0.1);

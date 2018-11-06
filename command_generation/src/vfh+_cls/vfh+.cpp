@@ -27,14 +27,11 @@ vfh::vfh(float width,float height,float resolution)
 	pub=nh_pub.advertise<sensor_msgs::Image>("grid_image",1);	
 }
 vfh::vfh()
-	:width(8.0),height(8.0),resolution(0.05)
+	:map_wf(8.0),map_hf(8.0),reso(0.05)
     {//,it(nh_pub){
 	//マップデータの設定と初期化
-	map_wf=width;
-	map_hf=height;
-	reso=resolution;
-	map_wi=(int)(map_wf/resolution);
-	map_hi=(int)(map_hf/resolution);
+	map_wi=(int)(map_wf/reso);
+	map_hi=(int)(map_hf/reso);
 	cr=std::sqrt(2)*reso/2;
 	std::cout<<"vfh\n";
 	

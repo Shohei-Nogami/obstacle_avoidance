@@ -43,7 +43,7 @@ void vfh::set_pub_debug_images(void)
 //	#pragma omp parallel for
 	for(h=0;h<H;h++){
 		uint8_t *pg = grid_map.ptr<uint8_t>(h);
-		uint8_t *pd = debug_image.ptr<uint8_t>(h);
+		cv::Vec3b *pd = debug_image.ptr<cv::Vec3b>(h);
 		//#pragma omp parallel for
 		for(int w=0;w<W;w++){
 			if(pg[w]>0){
@@ -51,6 +51,7 @@ void vfh::set_pub_debug_images(void)
                 pd[w][1]=255;
                 pd[w][2]=0;
             }
+		}
 			
 	}
 	debug_image.at<cv::Vec3b>(xri.y,xri.x)[0] =255;

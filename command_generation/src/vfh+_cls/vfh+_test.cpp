@@ -6,7 +6,7 @@ int main(int argc,char **argv)
 	ros::init(argc,argv,"vfh_test");
 	
 	//vfh
-	vfh vfh(8,8,0.01);
+	vfh vfh(10,10,0.05);
 	//or
 	//vfh vfh;
 	//vfh.set_grid_param(10,10,0.1);//10,10,0.1);
@@ -22,7 +22,7 @@ int main(int argc,char **argv)
 	vfh.set_center_point(cpt.x,cpt.y);
 	vfh.set_goal(goal_pt);
 	//--set_robot_param(float x,float y, float r,float vt0,float th_t0)
-	if(!vfh.set_robot_param(-2.5,-2.5,0.3,0.2,-M_PI/2))
+	if(!vfh.set_robot_param(-2.5,-2.5,0.3,0.2,M_PI))
 	{
 		std::cout<<"Error: robot param\n";
 		return -1; 
@@ -49,7 +49,10 @@ int main(int argc,char **argv)
 	vfh.set_obstacle_data(obst_data5);
 	//vfh.set_obstacle_data(obst_data6);
 	vfh.set_obstacle_data(obst_data7);
-	
+	for(float i=0;i<5;i+=0.05){
+		cv::Point2f data_temp=cv::Point2f(0.0,i-2.0);
+		vfh.set_obstacle_data(data_temp);
+	}
 	//path_planning
 	std::cout<<"path_planning...\n";
 	vfh.draw_path_mat();

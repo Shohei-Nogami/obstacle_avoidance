@@ -69,9 +69,9 @@ class vfh{
 		void set_grid_map(cv::Mat& map);
 		void set_obstacle_data(const cv::Point2f& data);
 		//select_angle.cpp
-        void set_polor_histogram(void);
+        void set_polar_histogram(void);
         float select_angle(void);
-        //controler
+        //controller
 		virtual void set_command_vel(float angle,float& v,float& w);
 		//debug
         virtual void draw_path_mat(void);

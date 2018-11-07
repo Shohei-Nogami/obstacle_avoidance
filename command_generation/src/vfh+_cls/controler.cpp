@@ -2,7 +2,27 @@
 
 void vfh::set_command_vel(float angle,float& v,float& w)
 {
-        float delta_th=angle-th_t;
+        float delta_th;
+
+		//-180<th_t<180
+		if(th_t>M_PI)
+		{
+			th_t-=2*M_PI;
+		}
+		else if(th_t<-M_PI)
+		{
+			th_t+=2*M_PI;
+		}
+		
+		delta_th= angle -th_t;
+		if(std::abs(delta_th)>M_PI){
+			if(delta_th<0){
+				delta_th+=2*M_PI;
+			}
+			else{
+				delta_th-=2*M_PI;
+			}
+		}
 		//角速度(P制御)
 		float Kp=1;
 		w=Kp*delta_th;
@@ -20,5 +40,6 @@ void vfh::set_command_vel(float angle,float& v,float& w)
 		//v=vrt-std::abs(dif_v)/2;
 		//速度は一定
 		v=vrt;
-			
+		std::cout<<"v,w,th,th_t:"<<v<<","<<w<<","<<angle*180/M_PI<<","<<th_t*180/M_PI<<"\n";
+
 }

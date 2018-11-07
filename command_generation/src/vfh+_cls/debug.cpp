@@ -9,6 +9,7 @@ void vfh::draw_path_mat(void)
 		//float to int
 		trans_point_f_to_i(xrf,xri);
 		std::cout<<"xrf,xgf:"<<xrf<<"-->"<<xgf<<"\n";
+		std::cout<<"th:"<<std::atan2((xgf.y-xrf.y),(xgf.x-xrf.x))*180/M_PI<<"\n";
 		//ゴールセルに到達したら終了
 		if(xri.x==xgi.x && xri.y==xgi.y)
 		{
@@ -18,9 +19,9 @@ void vfh::draw_path_mat(void)
 
 		//ロボットの命令速度算出
 		float w,v;
-        set_polor_histogram();
+        set_polar_histogram();
 		set_command_vel(select_angle(),v,w);
-		std::cout<<"v,w,th_t:"<<v<<","<<w<<","<<th_t<<"\n";
+		// std::cout<<"v,w,th_t:"<<v<<","<<w<<","<<th_t<<"\n";
 		//ロボットの移動
 		//mv_t:移動時間
 		float l=v*mv_t;

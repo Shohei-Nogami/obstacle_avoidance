@@ -17,10 +17,9 @@ vfh::vfh(float width,float height,float resolution)
 	grid_map=m_temp.clone();
 	
     //polor histogram range and resolution
-    min_range=-45;
-    max_range=45;
+    min_range=45;
+    max_range=135;
     reso_range=1;
-	//std::vector<float> ph;
 	ph.resize((max_range-min_range)/reso_range);
 	//debug
 	debug_image = cv::Mat::zeros(cv::Size(map_hi,map_wi), CV_8UC3);
@@ -44,7 +43,6 @@ vfh::vfh()
     min_range=-45;
     max_range=45;
     reso_range=1;
-	//std::vector<float> ph;
 	ph.resize((max_range-min_range)/reso_range);
 	//debug
 	debug_image = cv::Mat::zeros(cv::Size(map_hi,map_wi), CV_8UC3);

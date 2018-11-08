@@ -15,15 +15,18 @@ int main(int argc,char **argv)
     }
 	float v0=vrt=0.2;//temp
     while(ros::ok()){
+		//subscribe data
         cgen.subscribe_objects();
         cgen.subscribe_odometry();
+		//recognize obstacle state
         cgen.clear_safety_status();
         if(cgen.dicriminate_obstacle()){
             
         }
+		//the position of robot convert global to grid(int)
         trans_point_f_to_i(xrf,xri);
 		std::cout<<"xrf,xgf:"<<xrf<<"-->"<<xgf<<"\n";
-		//ゴールセルに到達したら終了
+		//ゴールセルに到達したら終\
 		if(xri.x==xgi.x && xri.y==xgi.y)
 		{
 			std::cout<<"Goal\n";
@@ -35,9 +38,8 @@ int main(int argc,char **argv)
 		kk=0;
 		while(ros::ok()&&kk++<100){
 			set_pub_mpc_debug_images(xri);
-			rate.sleep();
 		}
-		*/
+		
 		clear_move_data();
 		add_mv_pot(xri,obst_num);
 		set_grad(xri);

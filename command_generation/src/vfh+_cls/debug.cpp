@@ -59,6 +59,10 @@ void vfh::set_pub_debug_images(void)
 	debug_image.at<cv::Vec3b>(xri.y,xri.x)[1] =255;
 	debug_image.at<cv::Vec3b>(xri.y,xri.x)[2] =255;
 		
+	debug_image.at<cv::Vec3b>(xgi.y,xgi.x)[0] =0;
+	debug_image.at<cv::Vec3b>(xgi.y,xgi.x)[1] =0;
+	debug_image.at<cv::Vec3b>(xgi.y,xgi.x)[2] =255;
+
 	publish_debug_image(debug_image);
 	
 }

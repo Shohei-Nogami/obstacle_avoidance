@@ -10,7 +10,7 @@ void vfh::set_polar_histogram(void){
 	}
 	std::cout<<"min,th,max:"<<th_t*180/M_PI-(max_range-min_range)/2
 		<<","<<th_t*180/M_PI<<","<<th_t*180/M_PI+(max_range-min_range)/2<<"\n";
-	//trans grid to polor
+	//conv grid to polor
 	for(int h=0;h<H;h++){
 		uint8_t *pg = grid_map.ptr<uint8_t>(h);
 		for(int w=0;w<W;w++){
@@ -23,8 +23,7 @@ void vfh::set_polar_histogram(void){
 					||th>th_t*180/M_PI+(max_range-min_range)/2){
 					continue;
 				}
-				//障害物とロボットの大きさを考慮する必要がある(未実装)
-				//trans th(float) to thi(int)
+				//conv th(float) to thi(int)
 				int thi=(int)(th-(th_t*180/M_PI-(max_range-min_range)/2) );
 				// std::cout<<"th,thi,d:"<<th<<","<<thi<<","<<d<<"\n";
 				float dth=std::atan2(d,cr+rr)*180/M_PI;

@@ -41,6 +41,7 @@ class APF_MPC : public APF
 		void clear_mv_obstacle_data(void);
 		void move_obstacle_data(float& time);
 		void clear_move_data(void);
+		int get_obst_num(void);
 		//grid_map.cpp in apf class sources
 		////void set_command_vel(cv::Point2i& xri0,float& w);
 		void set_command_vel(const cv::Point2i& xri0,const float& v0,float& v,float& w,float& th_t0);

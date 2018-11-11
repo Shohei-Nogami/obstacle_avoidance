@@ -1,5 +1,8 @@
 #include<command_generator.h>
 
+#define STATIC_OBSTACLE 0
+#define DYNAMIC_OBSTACLE 1
+#define MOVING_OBSTACLE 2
 
 command_generator::command_generator()
 {
@@ -10,7 +13,8 @@ command_generator::command_generator()
 	sub2 = nhs2.subscribe("robot_odm", 1, &command_generator::odometry_callback, this);
 
 	pub = nhp.advertise<command_generation::select_theta>("command_vel", 1);
-
+	vrt=0;
+	wrt=0;
 }
 command_generator::~command_generator()
 {
@@ -55,12 +59,27 @@ bool command_generator::update_RobotPos(APF_MPC& apf_mpc)
 	cv::Point2f cpt=cv::Point(robot_odm.x,robot_odm.y+5.0);//5.0==map_hf/2
 	apf_mpc.set_center_point(cpt.x,cpt.y);
 	//--set_robot_param(float x,float y, float r,float vt0,float th_t0)
-	if(!apf_mpc.set_robot_param(robot_odm.x,robot_odm.y,0.2,0.2,robot_odm.th))//)
+	// if(!apf_mpc.set_robot_param(robot_odm.x,robot_odm.y,0.2,0.2,robot_odm.th))//)
+	if(!apf_mpc.update_robot_param(robot_odm.x,robot_odm.y,robot_odm.th,apf_mpc.get_vel(),apf_mpc.get_ang_vel()))
 	{
 		std::cout<<"Error: robot param\n";
 		return false; 
 	}
 	return true;
+}
+void command_generator::update_RobotVel(float& v,float& w){
+	vrt=v;
+	wrt=w;
+}
+float& command_generator::get_vel(void){
+	return vrt;
+}
+float& command_generator::get_angVel(void){
+	return wrt;
+}
+void command_generator::set_pos(cv::Point2f& x){
+	x.x=robot_odm.x;
+	x.y=robot_odm.y;
 }
 //subscribe
 void command_generator::subscribe_objects(void)
@@ -73,16 +92,13 @@ void command_generator::objects_callback(const command_generation::filted_object
 }
 void command_generator::subscribe_odometry(void)
 {
-	queue2.callOne(ros::WallDuration(1));
+	queue2.callOne(ros::WallDuration(100));
 }
 void command_generator::odometry_callback(const command_generation::robot_odm::ConstPtr& msg)
 {
 	robot_odm.x=msg->x;
 	robot_odm.y=msg->y;
 	robot_odm.th=msg->th;
-	x0.x = msg->x;
-	x0.y = msg->y;
-	theta0 = msg->th;
 }
 
 //set obstacle status
@@ -93,8 +109,6 @@ bool command_generator::dicriminate_obstacle(void)
 		return false;
 	}
 	obstacle_status.resize(obj_info.objs.size());
-	obstacle_safety_status.resize(obj_info.objs.size());
-	clear_safety_status();
 	for (int i = 0; i < obj_info.objs.size(); i++)
 	{
 
@@ -118,13 +132,6 @@ bool command_generator::dicriminate_obstacle(void)
 
 	}
 	return true;
-}
-void command_generator::clear_safety_status(void)
-{
-	for(int i = 0; i < obj_info.objs.size(); i++)
-	{
-    obstacle_safety_status[i]=SAFETY_OBSTACLE;
-	}
 }
 //set obstacle data
 void command_generator::set_obstacles(APF_MPC& apf_mpc){

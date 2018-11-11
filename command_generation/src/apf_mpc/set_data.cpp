@@ -41,3 +41,6 @@ void APF_MPC::clear_move_data(void)
 void APF_MPC::set_static_obstacle_data(const cv::Point2f& data){
 	set_obstacle_data(data);
 }
+int APF_MPC::get_obst_num(void){
+	return(int)((int)obst_pti.size()+mv_data_size);
+}

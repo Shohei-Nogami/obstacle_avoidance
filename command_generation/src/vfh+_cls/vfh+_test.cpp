@@ -33,6 +33,9 @@ int main(int argc,char **argv)
 	vfh.set_mov_time(0.05);
 	//grid_map obstalce data
 	std::cout<<"grid_map...\n";
+	//scan(r,th)
+	//x=r*cos(th)+robotの位置x
+	//y=r*sin(th)+robotの位置y
 	cv::Point2f obst_data=cv::Point2f(0.0,0.0);
 	cv::Point2f obst_data2=cv::Point2f(2.0,1.8);
 	cv::Point2f obst_data3=cv::Point2f(-1.0,1.0);

@@ -7,9 +7,11 @@ float APF_MPC::culc_mv_obstacle_fr(const cv::Point2i xti,const int& obstNum){
 	bool break_flag=false;
 	for(int n=0;n<mv_obsts.size();n++){
 		cv::Point2i pti;
+		//cv::Point2f *ptn=mv_obsts[n].data;
 		for(int k=0;k<mv_obsts[n].data.size();k++)
 		{
 			cv::Point2f pt=mv_obsts[n].data[k];
+			//cv::Point2f pt=ptn[k];
 			pt.x+=mv_obsts[n].mvx;
 			pt.y+=mv_obsts[n].mvy;
 			pt.x+=mv_obsts[n].mvxt;

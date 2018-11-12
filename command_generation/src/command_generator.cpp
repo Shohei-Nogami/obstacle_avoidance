@@ -33,11 +33,12 @@ bool command_generator::setting_RobotExpCondition(APF_MPC& apf_mpc,float reso)
     // robot_x.th=M_PI/2;
     //------ゴールポイントも適宜変更
 	//center point
-	cv::Point2f cpt=cv::Point(robot_odm.x,robot_odm.y+5.0);//5.0==map_hf/2
+	cv::Point2f cpt=cv::Point2f(robot_odm.x,robot_odm.y+5.0);//5.0==map_hf/2
 	//goal point
-	cv::Point2f goal_pt=cv::Point2f(0,10.0);//10.0==map_hf/2
+	cv::Point2f goal_pt=cv::Point2f(robot_odm.x,robot_odm.y+10.0);//10.0==map_hf/2
 	//-----
-
+	std::cout<<"cpt:"<<cpt<<"\n";
+	std::cout<<"goal_pt:"<<goal_pt<<"\n";
 	//set_param
 	std::cout<<"set_param...\n";
 	apf_mpc.set_center_point(cpt.x,cpt.y);
@@ -50,7 +51,8 @@ bool command_generator::setting_RobotExpCondition(APF_MPC& apf_mpc,float reso)
 	}
 	//--set_command_limit(float dif_vel)
 	apf_mpc.set_command_limit(0.1);
-	apf_mpc.set_mov_time(0.05);
+	// apf_mpc.set_mov_time(0.1);
+	apf_mpc.set_mov_time(0.4);
 	return true;	
 }
 bool command_generator::update_RobotPos(APF_MPC& apf_mpc)

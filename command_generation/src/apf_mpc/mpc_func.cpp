@@ -95,7 +95,7 @@ double APF_MPC::culc_cost(cv::Point2f& xrft0,const float v0,const float& time_ra
 	//init mv data
 	clear_move_data();
 	int obst_num=(int)obst_pti.size()+mv_data_size;
-	//ROS_INFO("culc_cost...while\n");
+	// ROS_INFO("culc_cost...while\n");
 	//std::cout<<"xrft0,xrft:"<<xrft0<<","<<xrft<<"\n";
 	//std::cout<<"xrit,xri:"<<xrft0<<","<<xrft<<"\n";
 	float vrate=2;
@@ -108,10 +108,10 @@ double APF_MPC::culc_cost(cv::Point2f& xrft0,const float v0,const float& time_ra
 		//std::cout<<"i:"<<i++<<"\n";
 		//set pot map(t)
 		pot_mapt=pot_map.clone();
-		//ROS_INFO("add_mv_pot...while\n");
+		// ROS_INFO("add_mv_pot...while\n");
 		add_mv_pot(xrit,obst_num);
 		//add cost
-		//ROS_INFO("sum_cost...while\n");
+		// ROS_INFO("sum_cost...while\n");
 		//std::cout<<"sum_cost:"<<sum_cost<<"\n";
 		sum_cost+=get_pot_xt(xrit);
 		//ゴールセルに到達したら終了
@@ -126,7 +126,7 @@ double APF_MPC::culc_cost(cv::Point2f& xrft0,const float v0,const float& time_ra
 			}
 			return -DBL_MAX*(tr/time_range);
 		}
-		//ROS_INFO("set_grad...while\n");
+		// ROS_INFO("set_grad...while\n");
 		if(set_grad(xrit))//collision
 		{
 			ROS_INFO("collision...MPC\n");
@@ -144,10 +144,10 @@ double APF_MPC::culc_cost(cv::Point2f& xrft0,const float v0,const float& time_ra
 		xrft.x=xrft.x + l*cos(th_t0);
 		xrft.y=xrft.y + l*sin(th_t0);
 		//障害物の移動
-		//ROS_INFO("move_obstacle_data...while\n");
+		// ROS_INFO("move_obstacle_data...while\n");
 		move_obstacle_data(mv_t);
 		//debug
-		//ROS_INFO("set_pub_mpc_debug_images()\n");
+		// ROS_INFO("set_pub_mpc_debug_images()\n");
 		//set_pub_mpc_debug_images(xrit);
 		
 		/*
@@ -184,10 +184,12 @@ float APF_MPC::get_speed(const cv::Point2f& xrft0,const float& vrt00)
 {
 	cv::Point2f xrft=xrft0;
 	cv::Point2i xrit;
-	float vrt0=vrt00;//
+	//float vrt0=vrt00;//
+	float vrt0=vrt;//
 	float delta_v=0.01;
-	float vrt1=vrt00+delta_v;
+	float vrt1=vrt+delta_v;
 	//
+	// std::cout<<"vrt:"<<vrt<<"\n";
 	float max_v=0.3;
 	float min_v=0.1;
 	//
@@ -195,12 +197,12 @@ float APF_MPC::get_speed(const cv::Point2f& xrft0,const float& vrt00)
 	double cost1=0;
 	float time_range=10;
 	//
-	float opt_v;
+	float opt_v=vrt;
 	//
 	//std::cout<<"vrt0:"<<vrt0<<"\n";
 	if(vrt1>=max_v){
-		vrt0=vrt00-delta_v;
-		vrt1=vrt00;//+delta_v;
+		vrt0=vrt0-delta_v;
+		vrt1=vrt0;//+delta_v;
 	}
 	//Process Once
 	/*
@@ -212,9 +214,9 @@ float APF_MPC::get_speed(const cv::Point2f& xrft0,const float& vrt00)
 	}
 	*/
 	//std::cout<<"xrft0,xrft:"<<xrft0<<","<<xrft<<"\n";
-	//ROS_INFO("culc_cost0...\n");
+	// ROS_INFO("culc_cost0...\n");
 	cost0=culc_cost(xrft,vrt0,time_range);
-	//ROS_INFO("culc_cost1...\n");
+	// ROS_INFO("culc_cost1...\n");
 	cost1=culc_cost(xrft,vrt1,time_range);
 	//predict param
 	int search_num=20;
@@ -225,7 +227,7 @@ float APF_MPC::get_speed(const cv::Point2f& xrft0,const float& vrt00)
 	//
 	bool flag01=false;
 	bool flag10=false;
-	//ROS_INFO("while...\n");
+	ROS_INFO("while...\n");
 	while(search_num-->0&&ros::ok()){
 		grad_v=(cost1-cost0)/delta_v;
 		//
@@ -241,7 +243,8 @@ float APF_MPC::get_speed(const cv::Point2f& xrft0,const float& vrt00)
 		//if(grad_v>0){//cost0<cost1
 		//std::cout<<"vrt("<<vrt0<<","<<vrt1<<")\n";
 		//std::cout<<"cost("<<cost0<<","<<cost1<<")\n";
-		std::cout<<"opt_v("<<opt_v<<")\n";
+		// ROS_INFO("cost0,cost1:(%f,%f)\n",cost0,cost1);
+		// std::cout<<"opt_v("<<opt_v<<")\n";
 		if(cost0<=cost1){
 			if(vrt0>=max_v){
 				return max_v;
@@ -269,12 +272,12 @@ float APF_MPC::get_speed(const cv::Point2f& xrft0,const float& vrt00)
 			vrt0=vrt1;
 			cost0=cost1;
 			vrt1=vrt0+delta_v;
-			cost1=culc_cost(xrft,vrt1,time_range);	
+			cost1=culc_cost(xrft,vrt1,time_range);
 			flag10=true;
 		}
 		if(flag01&&flag10)
 			break;
-				
+		
 	}
 	return opt_v;
 }

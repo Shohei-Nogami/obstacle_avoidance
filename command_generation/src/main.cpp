@@ -5,14 +5,14 @@ int main(int argc,char **argv)
 	ros::init(argc,argv,"command_genaration_apf");
     command_generator cgen;
 	//apf param
-	float W=5;
-	float H=5;
-	float reso=0.05;
+	float W=10;
+	float H=10;
+	float reso=0.1;
 	APF_MPC apf_mpc(W,H,reso);//10,10,0.1);
 	//first odometry 
 	std::cout<<"waiting first odometry\n";
     cgen.subscribe_odometry();
-    if(cgen.setting_RobotExpCondition(apf_mpc,reso)){
+    if(!cgen.setting_RobotExpCondition(apf_mpc,reso)){
         ROS_INFO("Setting failed!");
         return -1;
     }
@@ -31,10 +31,13 @@ int main(int argc,char **argv)
             
         }
 		//create potential map
+		ROS_INFO("create_pot_map");
 		apf_mpc.create_pot_map();
 		// int obst_num=(int)obst_pti.size()+mv_data_size;
+		ROS_INFO("clear_move_data");
 		apf_mpc.clear_move_data();
 		//the position of robot convert global to grid(int)
+		ROS_INFO("trans_point_f_to_i");
         apf_mpc.trans_point_f_to_i(apf_mpc.get_posf(),apf_mpc.get_posi());
 		std::cout<<"xrf,xgf:"<<apf_mpc.get_posf()<<"-->"<<apf_mpc.get_goal_posf()<<"\n";
 		//ゴールセルに到達したら終
@@ -46,11 +49,15 @@ int main(int argc,char **argv)
 			break;
 		}
 		//MPC
+		ROS_INFO("get_speed");
 		v0=apf_mpc.get_speed(apf_mpc.get_posf(),apf_mpc.get_vel());
+		ROS_INFO("clear_move_data");
 		apf_mpc.clear_move_data();
-
+		ROS_INFO("add_mv_pot");
 		apf_mpc.add_mv_pot(apf_mpc.get_posi(),apf_mpc.get_obst_num());//int --> ref int
+		ROS_INFO("set_grad");
 		apf_mpc.set_grad(apf_mpc.get_posi());
+		ROS_INFO("check_collision");
 		if(apf_mpc.check_collision(apf_mpc.get_posf()))//collision
 		{
 			ROS_INFO("collision...\n");
@@ -61,8 +68,9 @@ int main(int argc,char **argv)
 		float w,v;
 		ROS_INFO("set_command_vel...\n");
 		apf_mpc.set_command_vel(apf_mpc.get_posi(),v0,v,w,apf_mpc.get_ori());
-		// cgen.update_RobotVel(v,w);
-		// cgen.publish_velocity(v,w);
+		//cgen.update_RobotVel(v,w);
+		std::cout<<"v,w:"<<v<<","<<w<<"\n";
+		cgen.publish_velocity(v,w);
     }
 
 	ROS_INFO("Done...\n");

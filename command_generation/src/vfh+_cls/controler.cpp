@@ -13,8 +13,12 @@ void vfh::set_command_vel(float angle,float& v,float& w)
 		{
 			th_t+=2*M_PI;
 		}
-		
+		//偏差
+		//angle 目標
+		//th_t 現在地(フィードバックの値)
 		delta_th= angle -th_t;
+
+		//-180<th_t<180
 		if(std::abs(delta_th)>M_PI){
 			if(delta_th<0){
 				delta_th+=2*M_PI;

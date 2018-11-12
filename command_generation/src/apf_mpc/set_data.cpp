@@ -2,6 +2,9 @@
 
 void APF_MPC::set_mv_obstacle_data(const std::vector<cv::Point2f>& pts,const float vx0,const float vy0)
 {
+	// for(int k=0;k<pts.size();k++){
+
+	// }
 	mv_obst obst_temp;
 	obst_temp.data=pts;
 	obst_temp.vx=vx0;

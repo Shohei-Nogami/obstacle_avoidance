@@ -439,8 +439,8 @@ void detect_objects::draw_cluster(void)
 	}
 	sensor_msgs::PointCloud2 edit_cloud2;
 	pcl::toROSMsg (*clusted_cloud, edit_cloud2);
-	edit_cloud2.header.frame_id="/zed_current_frame";
-	//edit_cloud2.header.frame_id="/zed_camera_center";
+	//edit_cloud2.header.frame_id="/zed_current_frame";
+	edit_cloud2.header.frame_id="/zed_camera_center";
 	pc_pub2.publish(edit_cloud2);
 }
 

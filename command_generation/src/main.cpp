@@ -5,9 +5,9 @@ int main(int argc,char **argv)
 	ros::init(argc,argv,"command_genaration_apf");
     command_generator cgen;
 	//apf param
-	float W=10;
-	float H=10;
-	float reso=0.1;
+	float W=8;
+	float H=8;
+	float reso=0.15;
 	APF_MPC apf_mpc(W,H,reso);//10,10,0.1);
 	//first odometry 
 	std::cout<<"waiting first odometry\n";
@@ -51,7 +51,7 @@ int main(int argc,char **argv)
 			std::cout<<"Goal\n";
 			break;
 		}
-		//MPC
+		//MPC		
 		ROS_INFO("get_speed");
 		v0=apf_mpc.get_speed(apf_mpc.get_posf(),apf_mpc.get_vel());
 		ROS_INFO("clear_move_data");

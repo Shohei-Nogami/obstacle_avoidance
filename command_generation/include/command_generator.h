@@ -38,6 +38,8 @@ class command_generator {
         command_generation::robot_odm goal_odm;
         float vrt,wrt;
     	const float f=350.505;
+		const int width=672;
+		const int height=376;
         //dicriminate_obstacle
         std::vector<int> obstacle_status;
     public:

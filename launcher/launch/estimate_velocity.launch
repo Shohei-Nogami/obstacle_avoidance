@@ -1,7 +1,7 @@
 <launch>
-  <node pkg="obstacle_detection" name="detect_objects" type="detect_objects" />
-  <node pkg="obstacle_detection" name="culculating_opticalflow" type="culculating_opticalflow" />
-  <node pkg="obstacle_detection" name="culculate_centroid" type="culculate_centroid" />
+  <node pkg="obstacle_detection" name="detect_objects" type="detect_objects"  respawn="true" />
+  <node pkg="obstacle_detection" name="culculating_opticalflow" type="culculating_opticalflow"  respawn="true" />
+  <node pkg="obstacle_detection" name="culculate_centroid" type="culculate_centroid" respawn="true" />
   <node pkg="obstacle_detection" name="estimate_velocity" type="estimate_velocity" respawn="true" output="screen"/>
 
 </launch>

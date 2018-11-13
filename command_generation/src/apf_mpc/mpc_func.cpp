@@ -186,7 +186,7 @@ float APF_MPC::get_speed(const cv::Point2f& xrft0,const float& vrt00)
 	cv::Point2i xrit;
 	//float vrt0=vrt00;//
 	float vrt0=vrt;//
-	float delta_v=0.01;
+	float delta_v=0.05;
 	float vrt1=vrt+delta_v;
 	//
 	// std::cout<<"vrt:"<<vrt<<"\n";
@@ -195,7 +195,7 @@ float APF_MPC::get_speed(const cv::Point2f& xrft0,const float& vrt00)
 	//
 	double cost0=0;
 	double cost1=0;
-	float time_range=10;
+	float time_range=5;
 	//
 	float opt_v=vrt;
 	//
@@ -214,12 +214,12 @@ float APF_MPC::get_speed(const cv::Point2f& xrft0,const float& vrt00)
 	}
 	*/
 	//std::cout<<"xrft0,xrft:"<<xrft0<<","<<xrft<<"\n";
-	// ROS_INFO("culc_cost0...\n");
+	 ROS_INFO("culc_cost0...\n");
 	cost0=culc_cost(xrft,vrt0,time_range);
-	// ROS_INFO("culc_cost1...\n");
+	 ROS_INFO("culc_cost1...\n");
 	cost1=culc_cost(xrft,vrt1,time_range);
 	//predict param
-	int search_num=20;
+	int search_num=10;
 	float pot_th=0.10;//10%
 	float pot_rate;
 	//gradient v
@@ -244,7 +244,7 @@ float APF_MPC::get_speed(const cv::Point2f& xrft0,const float& vrt00)
 		//std::cout<<"vrt("<<vrt0<<","<<vrt1<<")\n";
 		//std::cout<<"cost("<<cost0<<","<<cost1<<")\n";
 		// ROS_INFO("cost0,cost1:(%f,%f)\n",cost0,cost1);
-		// std::cout<<"opt_v("<<opt_v<<")\n";
+		std::cout<<"opt_v("<<opt_v<<")\n";
 		if(cost0<=cost1){
 			if(vrt0>=max_v){
 				return max_v;

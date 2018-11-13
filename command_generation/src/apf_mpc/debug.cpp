@@ -4,22 +4,29 @@ void APF_MPC::set_pub_mpc_debug_images(const cv::Point2i& xrit0)
 {
 	int W=map_wi;
 	int H=map_hi;
-
+	mpc_debug_image = cv::Mat::zeros(cv::Size(map_hi,map_wi), CV_8UC3);
 	//mpc_debug_image = cv::Mat::zeros(cv::Size(map_hi,map_wi), CV_8UC3);
 	for(int h0=0;h0<H;h0++){
+		float *pd = pot_map.ptr<float>(h0);
+		cv::Vec3b *p3d = mpc_debug_image.ptr<cv::Vec3b>(h0);
 		for(int w0=0;w0<W;w0++){
 			//set potential
 			//float pot=pot_mapt.at<float>(h0,w0);//*std::abs(sum_pot);
-			float pot=pot_map.at<float>(h0,w0);//*std::abs(sum_pot);
+			// float pot=pot_map.at<float>(h0,w0);//*std::abs(sum_pot);
+			float pot=pd[w0];
 			//std::cout<<"pot:"<<pot<<"\n";
 			if(pot>0)
 			{
-				mpc_debug_image.at<cv::Vec3b>(h0,w0)[2] =pot*255;
+				// mpc_debug_image.at<cv::Vec3b>(h0,w0)[2] =pot*255;
+				p3d[w0][2]=pot*255;
 			}
 			else
 			{
-				mpc_debug_image.at<cv::Vec3b>(h0,w0)[0] =(-pot)*255;
-				mpc_debug_image.at<cv::Vec3b>(h0,w0)[1] =(-pot)*255;
+				// mpc_debug_image.at<cv::Vec3b>(h0,w0)[0] =(-pot)*255;
+				// mpc_debug_image.at<cv::Vec3b>(h0,w0)[1] =(-pot)*255;
+				p3d[w0][0]=(-pot)*255;
+				p3d[w0][1]=(-pot)*255;
+
 			}
 			//set path
 		}	

@@ -34,9 +34,9 @@ bool command_generator::setting_RobotExpCondition(APF_MPC& apf_mpc,float reso)
     // robot_x.th=M_PI/2;
     //------ゴールポイントも適宜変更
 	//center point
-	cv::Point2f cpt=cv::Point2f(robot_odm.x,robot_odm.y+5.0);//5.0==map_hf/2
+	cv::Point2f cpt=cv::Point2f(robot_odm.x,robot_odm.y+4.0);//5.0==map_hf/2
 	//goal point
-	cv::Point2f goal_pt=cv::Point2f(robot_odm.x,robot_odm.y+10.0);//10.0==map_hf/2
+	cv::Point2f goal_pt=cv::Point2f(robot_odm.x,robot_odm.y+8.0);//10.0==map_hf/2
 	//-----
 	std::cout<<"cpt:"<<cpt<<"\n";
 	std::cout<<"goal_pt:"<<goal_pt<<"\n";
@@ -53,13 +53,13 @@ bool command_generator::setting_RobotExpCondition(APF_MPC& apf_mpc,float reso)
 	//--set_command_limit(float dif_vel)
 	apf_mpc.set_command_limit(0.1);
 	// apf_mpc.set_mov_time(0.1);
-	apf_mpc.set_mov_time(0.4);
+	apf_mpc.set_mov_time(1);
 	return true;	
 }
 bool command_generator::update_RobotPos(APF_MPC& apf_mpc)
 {
     //center point
-	cv::Point2f cpt=cv::Point2f(robot_odm.x,robot_odm.y+5.0-0.1);//5.0==map_hf/2
+	cv::Point2f cpt=cv::Point2f(robot_odm.x,robot_odm.y+4.0-0.1);//5.0==map_hf/2
 	apf_mpc.set_center_point(cpt.x,cpt.y);
 	//--set_robot_param(float x,float y, float r,float vt0,float th_t0)
 	// if(!apf_mpc.set_robot_param(robot_odm.x,robot_odm.y,0.2,0.2,robot_odm.th))//)
@@ -158,9 +158,9 @@ void command_generator::set_obstacles(APF_MPC& apf_mpc){
             //set static obstacles
             for(int k=0;k<obj_info.objs[i].pt.size(); k++){
                 cv::Point2f obst_data;
-                obst_data.x=obj_info.objs[i].pt[k].x*obj_info.objs[i].pt[k].z/f+robot_odm.x;
+                obst_data.x=(obj_info.objs[i].pt[k].x-width/2)*obj_info.objs[i].pt[k].z/f+robot_odm.x;
                 obst_data.y=obj_info.objs[i].pt[k].z+robot_odm.y;
-				std::cout<<"obst_data:"<<obst_data<<"\n";
+				// std::cout<<"obst_data:"<<obst_data<<"\n";
 	        	apf_mpc.set_static_obstacle_data(obst_data);
             }
         }
@@ -180,7 +180,7 @@ void command_generator::publish_wheel_velocity(float& v,float w)
 	wheel_control::wheel_msg pub_data;
 	float d=0.138;
 	float dif_v = w*2*d;
-	pub_data.vel_l=v-dif_v;
-	pub_data.vel_r=v+dif_v;
+	pub_data.vel_l=(int)((v-dif_v)*1000);
+	pub_data.vel_r=(int)((v+dif_v)*1000);
 	pub2.publish(pub_data);
 }

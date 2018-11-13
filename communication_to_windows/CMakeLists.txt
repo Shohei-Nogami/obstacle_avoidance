@@ -192,6 +192,7 @@ include_directories(
 #############
 add_executable(communication_to_win src/com_win_pc/recv1.cpp)
 add_dependencies(communication_to_win ${communication_to_win_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(communication_to_win ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(communication_to_win ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 ## Add gtest based cpp test target and link libraries

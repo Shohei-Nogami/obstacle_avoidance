@@ -204,6 +204,7 @@ include_directories(
 # endif()
 
 add_executable(wheel_control src/wheel_control/whl_cntrl.cpp )
+add_dependencies(wheel_control ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(wheel_control  ${catkin_LIBRARIES} )
 
 ## Add folders to be run by python nosetests

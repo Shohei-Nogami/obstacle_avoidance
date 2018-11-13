@@ -207,6 +207,7 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 add_executable(data_proc src/data_proc.cpp)
+add_dependencies(data_proc ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(data_proc ${catkin_LIBRARIES} )
 add_definitions(-std=c++11)
 

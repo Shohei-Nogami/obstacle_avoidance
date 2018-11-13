@@ -203,6 +203,7 @@ include_directories(
 # endif()
 
 add_executable(odometry_publisher src/odm_cls/pub_odm.cpp src/tm_cls/time_class.cpp src/odm_cls/odometry_class.cpp src/odm_cls/wheel_odometry_class.cpp src/odm_cls/visual_odometry_class.cpp)
+add_dependencies(odometry_publisher ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(odometry_publisher ${catkin_LIBRARIES} )
 
 ## Add folders to be run by python nosetests

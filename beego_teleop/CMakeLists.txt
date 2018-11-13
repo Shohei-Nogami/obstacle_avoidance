@@ -207,6 +207,7 @@ include_directories(
 
 add_executable(keyboard_teleop src/beego_teleop/beego_teleop_key.cpp)
 add_dependencies(keyboard_teleop ${keyboard_teleop_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(keyboard_teleop ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(keyboard_teleop ${catkin_LIBRARIES} )
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)

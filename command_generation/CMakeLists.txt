@@ -225,6 +225,8 @@ add_executable(command_generation_apf src/main.cpp src/command_generator.cpp
   src/apf_mpc/mv_pot_map.cpp  src/apf_mpc/mpc_func.cpp src/apf_mpc/debug.cpp 
   
   )
+add_dependencies(command_generation_apf ${PROJECT_NAME}_generate_messages_cpp)
+add_dependencies(command_generation_apf ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(command_generation_apf ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 
@@ -232,6 +234,7 @@ add_executable(vfh_test src/vfh+_cls/vfh+_test.cpp src/vfh+_cls/vfh+.cpp
   src/tm_cls/time_class.cpp src/vfh+_cls/controler.cpp src/vfh+_cls/coordinate_convert.cpp
   src/vfh+_cls/debug.cpp src/vfh+_cls/grid_map.cpp src/vfh+_cls/select_angle.cpp
   src/vfh+_cls/set_param.cpp )
+add_dependencies(vfh_test ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(vfh_test ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 ## Add folders to be run by python nosetests

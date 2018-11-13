@@ -25,10 +25,13 @@ int main(int argc,char **argv)
 		//subscribe data
         cgen.subscribe_objects();
         cgen.subscribe_odometry();
+		//update param and init data
 		cgen.update_RobotPos(apf_mpc);
-		//recognize obstacle state
+		//apf_mpc.clear_mv_obstacle_data();
+		apf_mpc.clear_grid_map();
+		//recognize obstacle state(
         if(cgen.dicriminate_obstacle()){
-            
+			cgen.set_obstacles(apf_mpc);
         }
 		//create potential map
 		ROS_INFO("create_pot_map");
@@ -71,6 +74,8 @@ int main(int argc,char **argv)
 		//cgen.update_RobotVel(v,w);
 		std::cout<<"v,w:"<<v<<","<<w<<"\n";
 		cgen.publish_velocity(v,w);
+		cgen.publish_wheel_velocity(v,w);
+		apf_mpc.set_pub_mpc_debug_images(xri);
     }
 
 	ROS_INFO("Done...\n");

@@ -147,6 +147,9 @@ void APF::create_pot_map(void){
 	//
 	search_obst_pt();
 	int obst_num=(int)obst_pti.size();
+	//init pot map 
+	cv::Mat m_temp = cv::Mat::zeros(cv::Size(map_hi,map_wi), CV_32FC1);
+	pot_map=m_temp.clone();
 	//
 	#pragma omp parallel for
 	for(int h0=0;h0<H;h0++){

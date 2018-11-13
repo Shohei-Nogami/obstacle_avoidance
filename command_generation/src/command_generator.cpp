@@ -12,7 +12,8 @@ command_generator::command_generator()
 	nhs2.setCallbackQueue(&queue2);
 	sub2 = nhs2.subscribe("robot_odm", 1, &command_generator::odometry_callback, this);
 
-	pub = nhp.advertise<command_generation::select_theta>("command_vel", 1);
+	pub1 = nhp1.advertise<command_generation::select_theta>("command_vel", 1);
+	pub2 = nhp2.advertise<wheel_control::wheel_msg>("vel_data", 1);
 	vrt=0;
 	wrt=0;
 }
@@ -58,7 +59,7 @@ bool command_generator::setting_RobotExpCondition(APF_MPC& apf_mpc,float reso)
 bool command_generator::update_RobotPos(APF_MPC& apf_mpc)
 {
     //center point
-	cv::Point2f cpt=cv::Point(robot_odm.x,robot_odm.y+5.0);//5.0==map_hf/2
+	cv::Point2f cpt=cv::Point2f(robot_odm.x,robot_odm.y+5.0-0.1);//5.0==map_hf/2
 	apf_mpc.set_center_point(cpt.x,cpt.y);
 	//--set_robot_param(float x,float y, float r,float vt0,float th_t0)
 	// if(!apf_mpc.set_robot_param(robot_odm.x,robot_odm.y,0.2,0.2,robot_odm.th))//)
@@ -137,7 +138,8 @@ bool command_generator::dicriminate_obstacle(void)
 }
 //set obstacle data
 void command_generator::set_obstacles(APF_MPC& apf_mpc){
-    
+
+    apf_mpc.clear_mv_obstacle_data();//add
     for (int i = 0; i < obj_info.objs.size(); i++)
 	{
         if(obstacle_status[i] == MOVING_OBSTACLE){
@@ -145,7 +147,7 @@ void command_generator::set_obstacles(APF_MPC& apf_mpc){
             std::vector<cv::Point2f> pts;
             pts.resize(obj_info.objs[i].pt.size());
             for(int k=0;k<obj_info.objs[i].pt.size(); k++){
-                pts[k].x=obj_info.objs[i].pt[k].x+robot_odm.x;
+                pts[k].x=obj_info.objs[i].pt[k].x*obj_info.objs[i].pt[k].z/f+robot_odm.x;
                 pts[k].y=obj_info.objs[i].pt[k].z+robot_odm.y;
             }
             float vx=obj_info.objs[i].vel.x;
@@ -156,8 +158,9 @@ void command_generator::set_obstacles(APF_MPC& apf_mpc){
             //set static obstacles
             for(int k=0;k<obj_info.objs[i].pt.size(); k++){
                 cv::Point2f obst_data;
-                obst_data.x=obj_info.objs[i].pt[k].x+robot_odm.x;
+                obst_data.x=obj_info.objs[i].pt[k].x*obj_info.objs[i].pt[k].z/f+robot_odm.x;
                 obst_data.y=obj_info.objs[i].pt[k].z+robot_odm.y;
+				std::cout<<"obst_data:"<<obst_data<<"\n";
 	        	apf_mpc.set_static_obstacle_data(obst_data);
             }
         }
@@ -170,5 +173,14 @@ void command_generator::publish_velocity(float& v,float w)
 	command_generation::select_theta pub_data;
 	pub_data.select_theta=w;
 	pub_data.select_vel=v;
-	pub.publish(pub_data);
+	pub1.publish(pub_data);
+}
+void command_generator::publish_wheel_velocity(float& v,float w)
+{
+	wheel_control::wheel_msg pub_data;
+	float d=0.138;
+	float dif_v = w*2*d;
+	pub_data.vel_l=v-dif_v;
+	pub_data.vel_r=v+dif_v;
+	pub2.publish(pub_data);
 }

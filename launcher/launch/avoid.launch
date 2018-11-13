@@ -3,7 +3,8 @@
 <!--  <node pkg="obst_avoid" name="culculating_opticalflow_class_test" type="culculating_opticalflow_class_test" /> -->
 <!--  <node pkg="obst_avoid" name="culculate_centroid_class_test" type="culculate_centroid_class_test" /> -->
 <!--  <node pkg="obst_avoid" name="estimate_velocity_class_test" type="estimate_velocity_class_test"/> -->
-  <node pkg="command_generation" name="command_generation" type="command_generation" output="screen"/>
+  <!-- <node pkg="command_generation" name="command_generation" type="command_generation" output="screen"/> -->
+  <node pkg="command_generation" name="command_generation_apf" type="command_generation_apf" output="screen"/>
   <node pkg="odometry_publish" name="odometry_publisher" type="odometry_publisher"/>
   <node pkg="wheel_control" name="wheel_control" type="wheel_control"/>
 

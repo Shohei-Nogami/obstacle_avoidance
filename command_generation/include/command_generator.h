@@ -22,11 +22,13 @@
 #include<std_msgs/Empty.h>
 #include<omp.h>
 #include<image_transport/image_transport.h>
+#include<wheel_control/wheel_msg.h>
+
 class command_generator {
     private:
         //ros publisher subscriber
-        ros::NodeHandle nhp,nhs,nhs2;
-        ros::Publisher pub;
+        ros::NodeHandle nhp1,nhp2,nhs,nhs2;
+        ros::Publisher pub1,pub2;
         ros::Subscriber sub,sub2;
         ros::CallbackQueue queue,queue2;
 
@@ -35,6 +37,7 @@ class command_generator {
         command_generation::robot_odm robot_odm;
         command_generation::robot_odm goal_odm;
         float vrt,wrt;
+    	const float f=350.505;
         //dicriminate_obstacle
         std::vector<int> obstacle_status;
     public:
@@ -59,5 +62,7 @@ class command_generator {
         void set_obstacles(APF_MPC& apf_mpc);
         //publish
         void publish_velocity(float& v,float w);
+        void publish_wheel_velocity(float& v,float w);
+
     };
 #endif

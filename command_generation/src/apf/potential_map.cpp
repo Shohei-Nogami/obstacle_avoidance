@@ -9,8 +9,8 @@ float APF::culc_dis(const int& w0,const int& h0,const int& w1,const int& h1)
 float APF::culc_fr(const float& dis,const int& obstNum)
 {
 	float weight=0.01;
-	float safe_rate=3;
-	float margin=0.1;
+	float safe_rate=10;//3;
+	float margin=0.2;//0.1;
 	float eps=0.1;
 	
 	for(int i=0;i<safe_rate;i++)

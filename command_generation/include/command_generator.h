@@ -34,7 +34,7 @@ class command_generator {
 
         //ros msgs
         command_generation::filted_objects_info obj_info;
-        command_generation::robot_odm robot_odm;
+        command_generation::robot_odm robot_odm,robot_odm0;
         command_generation::robot_odm goal_odm;
         float vrt,wrt;
     	const float f=350.505;

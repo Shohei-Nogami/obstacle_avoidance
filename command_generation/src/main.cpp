@@ -21,6 +21,30 @@ int main(int argc,char **argv)
 	float w_temp=0;
 	cgen.update_RobotVel(v_temp,w_temp);
 	std::cout<<"process starts\n";
+	//turtlebot setting
+	geometry_msgs::Twist turtlebot_vel;
+	std_msgs::Empty empty_msg;
+	ros::NodeHandle nh,nh2;
+	ros::Publisher pub,pub2;
+	pub = nh.advertise<geometry_msgs::Twist>("mobile_base/commands/velocity", 1);
+	pub2 = nh.advertise<std_msgs::Empty>("mobile_base/commands/reset_odometry", 1);
+
+	turtlebot_vel.linear.x=0.2;
+	turtlebot_vel.linear.y=0;
+	turtlebot_vel.linear.z=0;
+	turtlebot_vel.angular.x=0;
+	turtlebot_vel.angular.y=0;
+	turtlebot_vel.angular.z=0;
+
+	int i=0;
+	ros::Rate r=1;
+
+	while(ros::ok()&&i++<2)
+	{
+		pub2.publish(empty_msg);
+		r.sleep();
+	}
+	
     while(ros::ok()){
 		//subscribe data
         cgen.subscribe_objects();
@@ -76,8 +100,16 @@ int main(int argc,char **argv)
 		cgen.publish_velocity(v,w);
 		cgen.publish_wheel_velocity(v,w);
 		apf_mpc.set_pub_mpc_debug_images(xri);
+		
+		//turtlebot vel pub
+		//pub.publish(turtlebot_vel);
+		
     }
-
+    	float v=0;
+    	float w=0;
+	cgen.publish_velocity(v,w);
+	turtlebot_vel.linear.x=0;
+	pub.publish(turtlebot_vel);
 	ROS_INFO("Done...\n");
 	return 0;
 }

@@ -47,7 +47,7 @@ void APF_MPC::set_command_vel(const cv::Point2i& xri0,const float& v0,float& v,f
 	//set_command_limit(v0/2);
 	
 	//角速度(P制御)
-	float Kp=1;
+	float Kp=0.1;
 	w=Kp*delta_th;
 	//std::cout<<"th,th_t0:"<<th<<","<<th_t0<<"\n";
 	//std::cout<<"delta_th,w:"<<delta_th<<","<<w<<"\n";

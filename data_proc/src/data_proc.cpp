@@ -153,6 +153,7 @@ public:
 		
 		float dis=std::sqrt((oodom.pose.pose.position.x-oodom0.pose.pose.position.x)*(oodom.pose.pose.position.x-oodom0.pose.pose.position.x)
 							+(oodom.pose.pose.position.y-oodom0.pose.pose.position.y)*(oodom.pose.pose.position.y-oodom0.pose.pose.position.y));
+//		float dtheta=oodom.pose.pose.orientation.z;
 		float xot=dis*cos(dif_th)+dif_odom.pose.pose.position.y;
 		float yot=dis*sin(dif_th)+dif_odom.pose.pose.position.x;
 		ofs1<<time_obst.toSec()<<","

@@ -20,6 +20,7 @@ void odometry_class::set_data(void){
 	vocls.set_velocity();
 }
 void odometry_class::set_velocity(void){
+	/*
 	//set velocity X
 	vv_x=vocls.get_velocity_x();
 	vv_y=vocls.get_velocity_y();
@@ -81,20 +82,16 @@ void odometry_class::set_velocity(void){
 		v=wv;
 		w=ww;
 	}
-	/*
-	if(std::isnan(w))
-	{
-		int kk=1;
-		while(ros::ok()&&kk){
-		std::cout<<"isnan w";std::cin>>kk;
-		}
-	}
 	*/
+	//wheel only
+	v=wocls.get_velocity();
+	w=wocls.get_angular_velocity();
+
 }
 void odometry_class::set_odometry(void){
 	tm_odm.set_time();
 
-	yw+=w*tm_odm.get_delta_time();
+	yw+=w*tm_odm.get_delta_time();//yaw angle
 	r+=0;
 	p+=0;
 	//x+=v*sin(-w*tm_odm.get_delta_time())*tm_odm.get_delta_time();

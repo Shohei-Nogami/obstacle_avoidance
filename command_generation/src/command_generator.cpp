@@ -44,7 +44,7 @@ bool command_generator::setting_RobotExpCondition(APF_MPC& apf_mpc,float reso)
 	apf_mpc.set_center_point(cpt.x,cpt.y);
 	apf_mpc.set_goal(goal_pt);
 	//--set_robot_param(float x,float y, float r,float vt0,float th_t0)
-	if(!apf_mpc.set_robot_param(robot_odm.x,robot_odm.y,0.2,0.2,robot_odm.th))//)
+	if(!apf_mpc.set_robot_param(robot_odm.x,robot_odm.y,0.2,0.2,robot_odm.th+M_PI/2))//)
 	{
 		std::cout<<"Error: robot param\n";
 		return false; 
@@ -62,7 +62,7 @@ bool command_generator::update_RobotPos(APF_MPC& apf_mpc)
 	apf_mpc.set_center_point(cpt.x,cpt.y);
 	//--set_robot_param(float x,float y, float r,float vt0,float th_t0)
 	// if(!apf_mpc.set_robot_param(robot_odm.x,robot_odm.y,0.2,0.2,robot_odm.th))//)
-	if(!apf_mpc.update_robot_param(robot_odm.x,robot_odm.y,robot_odm.th,apf_mpc.get_vel(),apf_mpc.get_ang_vel()))
+	if(!apf_mpc.update_robot_param(robot_odm.x,robot_odm.y,robot_odm.th+M_PI/2,apf_mpc.get_vel(),apf_mpc.get_ang_vel()))
 	{
 		std::cout<<"Error: robot param\n";
 		return false; 

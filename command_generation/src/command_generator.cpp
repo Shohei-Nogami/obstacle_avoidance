@@ -61,8 +61,8 @@ bool command_generator::setting_RobotExpCondition(APF_MPC& apf_mpc,float reso)
 bool command_generator::update_RobotPos(APF_MPC& apf_mpc)
 {
     //center point
-	cv::Point2f cpt=cv::Point2f(robot_odm.x,robot_odm.y+4.0-0.1);//5.0==map_hf/2
-	apf_mpc.set_center_point(cpt.x,cpt.y);
+	// cv::Point2f cpt=cv::Point2f(robot_odm.x,robot_odm.y+4.0-0.1);//5.0==map_hf/2
+	// apf_mpc.set_center_point(cpt.x,cpt.y);
 	//goal point
 	cv::Point2f goal_pt=cv::Point2f(robot_odm0.x,robot_odm0.y+8.0);//10.0==map_hf/2
 	apf_mpc.set_goal(goal_pt);	

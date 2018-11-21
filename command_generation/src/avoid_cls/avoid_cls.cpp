@@ -976,7 +976,7 @@ int main(int argc,char **argv)
 
   while(ros::ok())
 	{
-
+		/*
 		//pub.publish(turtlebot_vel);
 		ROBOT_STATUS=ROBOT_GO;
 		std::cout<<"begin\n";
@@ -1042,8 +1042,10 @@ int main(int argc,char **argv)
 		avoid_cls.publish_velocity();
 
 		avoid_cls.publish_grid_map();
+		*/
 		// avoid_cls.subscribe_pcl();
 		// avoid_cls.conv_pcl_img();
+		avoid_cls.debug_cloud();
 		std::cout<<"loop\n";
 
 	}

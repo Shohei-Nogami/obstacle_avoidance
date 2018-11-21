@@ -2,6 +2,7 @@
  
 void APF_MPC::set_pub_mpc_debug_images(const cv::Point2i& xrit0)
 {
+	/*
 	int W=map_wi;
 	int H=map_hi;
 	mpc_debug_image = cv::Mat::zeros(cv::Size(map_hi,map_wi), CV_8UC3);
@@ -31,6 +32,7 @@ void APF_MPC::set_pub_mpc_debug_images(const cv::Point2i& xrit0)
 			//set path
 		}	
 	}
+	*/
 	mpc_debug_image.at<cv::Vec3b>(xrit0.y,xrit0.x)[0] =255;
 	mpc_debug_image.at<cv::Vec3b>(xrit0.y,xrit0.x)[1] =255;
 	mpc_debug_image.at<cv::Vec3b>(xrit0.y,xrit0.x)[2] =255;
@@ -75,8 +77,24 @@ void APF_MPC::draw_mpc_path_mat(void)
 	float goal_time=0;
 	std::ofstream ofss("./vel_angVel.csv",std::ios::app);
 	ofss<<"time"<<","<<"x"<<","<<"y"<<","<<"v"<<","<<"w"<<","<<"th_t"<<","<<std::endl;
-	
+
+	// ros::NodeHandle nh1,nh2;
+	// ros::Publisher pub1,pub2;
+	// command_generation::robot_odm robot_odm;
+	// nav_msgs::Odometry obst_odm;
+	// pub1=nh1.advertise<command_generation::robot_odm>("robot_odm",1);
+	// pub2=nh2.advertise<nav_msgs::Odometry>("obstacle_odm",1);
+
+	// obst_odm.pose.pose.position.x=3.5;
+	// obst_odm.pose.pose.position.y=0;
+	// obst_odm.pose.pose.position.z=0;
 	while(ros::ok()){
+		// //debug
+		// robot_odm.x=xrf.x;
+		// robot_odm.y=xrf.y;
+		// obst_odm.pose.pose.position.x+=mv_t*0.2;
+		// pub1.publish(robot_odm);
+		// pub2.publish(obst_odm);
 		//float to int
 		trans_point_f_to_i(xrf,xri);
 		std::cout<<"xrf,xgf:"<<xrf<<"-->"<<xgf<<"\n";

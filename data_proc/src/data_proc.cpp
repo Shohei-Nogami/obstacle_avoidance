@@ -9,7 +9,7 @@ class data_prcs_exp
 {
 
 	ros::NodeHandle nh1,nh2,nh3;
-	ros::NodeHandle nh01;;
+	ros::NodeHandle nh01;
 //subscriber
 	ros::Subscriber sub1,sub2,sub3;
 	ros::Publisher pub1;
@@ -28,7 +28,7 @@ class data_prcs_exp
 public:	
 	data_prcs_exp()
         :PROCESS_ONCE_OODOM(false),PROCESS_ONCE_RODOM(false),PROCESS_ONCE_RVEL(false)
-        ,userpath("/home/ros-robot/"),filepath("ex_data/test/"),dif_th(-M_PI*5/6)
+        ,userpath("/home/ros-robot/"),filepath("ex_data/test/"),dif_th(-M_PI)//*5/6)
 		{
         //init odometry of an obstacls
 		oodom.pose.pose.position.x=0;
@@ -140,7 +140,8 @@ public:
 			<<std::endl;
     }
 	bool all_subscribed(void){
-		if(PROCESS_ONCE_OODOM && PROCESS_ONCE_RODOM && PROCESS_ONCE_RVEL){
+		// std::cout<<PROCESS_ONCE_OODOM << "&&"<< PROCESS_ONCE_RODOM<<" && "<<PROCESS_ONCE_RVEL<<"\n";
+		if(PROCESS_ONCE_OODOM && PROCESS_ONCE_RODOM ){//&& PROCESS_ONCE_RVEL){
 			return true;
 		}
 		else{
@@ -211,7 +212,8 @@ public:
 		
 		data_prcs_exp prc;
         // prc.set_label();
-        prc.set_dif_odom(5.0,5.0,0);		
+        prc.set_dif_odom(2.0,3.5,0);		
+		// prc.set_dif_odom(2.0,4.0,0);		
 		while(ros::ok()){
 			prc.call();
 			if(prc.all_subscribed()){

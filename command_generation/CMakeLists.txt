@@ -229,6 +229,21 @@ add_dependencies(command_generation_apf ${PROJECT_NAME}_generate_messages_cpp)
 add_dependencies(command_generation_apf ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(command_generation_apf ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
+add_executable(command_generation_vfh src/main.cpp src/command_generator.cpp
+  #vfh
+  src/vfh+_cls/vfh+.cpp 
+  src/tm_cls/time_class.cpp src/vfh+_cls/controler.cpp src/vfh+_cls/coordinate_convert.cpp
+  src/vfh+_cls/debug.cpp src/vfh+_cls/grid_map.cpp src/vfh+_cls/select_angle.cpp
+  src/vfh+_cls/set_param.cpp
+  #vfh_mpc
+  src/vfh+_mpc/vfh+_mpc.cpp src/vfh+_mpc/set_data.cpp 
+  src/vfh+_mpc/mv_pot_map.cpp  src/apf_mpc/vfh+_func.cpp src/vfh+_mpc/debug.cpp 
+  
+  )
+add_dependencies(command_generation_vfh ${PROJECT_NAME}_generate_messages_cpp)
+add_dependencies(command_generation_vfh ${PROJECT_NAME}_generate_messages_cpp)
+target_link_libraries(command_generation_vfh ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+
 
 add_executable(vfh_test src/vfh+_cls/vfh+_test.cpp src/vfh+_cls/vfh+.cpp 
   src/tm_cls/time_class.cpp src/vfh+_cls/controler.cpp src/vfh+_cls/coordinate_convert.cpp

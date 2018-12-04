@@ -15,6 +15,7 @@
 #include <pcl_ros/point_cloud.h>
 #include<fstream>//file input output
 #include<apf_mpc.h>
+#include<vfh+_mpc.h>
 #include<command_generation/point2d.h>
 #include<command_generation/select_theta.h>
 #include<command_generation/robot_odm.h>
@@ -48,6 +49,8 @@ class command_generator {
         //setting
         bool setting_RobotExpCondition(APF_MPC& apf_mpc,float reso);
         bool update_RobotPos(APF_MPC& apf_mpc);
+		bool setting_RobotExpCondition(VFH_MPC& vfh_mpc, float reso);
+		bool update_RobotPos(VFH_MPC& vfh_mpc);
         void update_RobotVel(float& v,float& w);
         float& get_vel(void);
         float& get_angVel(void);
@@ -62,6 +65,7 @@ class command_generator {
         bool dicriminate_obstacle(void);
         //set obstacle data
         void set_obstacles(APF_MPC& apf_mpc);
+		void set_obstacles(VFH_MPC& vfh_mpc);
         //publish
         void publish_velocity(float& v,float w);
         void publish_wheel_velocity(float& v,float w);

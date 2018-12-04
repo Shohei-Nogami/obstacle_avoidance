@@ -21,7 +21,7 @@ command_generator::~command_generator()
 {
 	//vfh.~vfh_class();
 }
-//setting
+//setting apf
 bool command_generator::setting_RobotExpCondition(APF_MPC& apf_mpc,float reso)
 {
 	//setting
@@ -75,6 +75,61 @@ bool command_generator::update_RobotPos(APF_MPC& apf_mpc)
 	}
 	return true;
 }
+//setting vfh
+bool command_generator::setting_RobotExpCondition(VFH_MPC& vfh_mpc,float reso)
+{
+	//setting
+	std::cout<<"wait...\n";
+    
+    // //----実験時にはcpt.x=robot.x,cpt.y=robot.y+5, 逐次更新
+    // command_generation::robot_odm robot_x;
+    // robot_x.x=5;
+    // robot_x.y=0;
+    // robot_x.th=M_PI/2;
+    //------ゴールポイントも適宜変更
+	//center point
+	cv::Point2f cpt=cv::Point2f(robot_odm.x,robot_odm.y+4.0);//5.0==map_hf/2
+	//goal point
+	cv::Point2f goal_pt=cv::Point2f(robot_odm.x,robot_odm.y+8.0);//10.0==map_hf/2
+	//robot odometry 0
+	robot_odm0=robot_odm;
+	//-----
+	std::cout<<"cpt:"<<cpt<<"\n";
+	std::cout<<"goal_pt:"<<goal_pt<<"\n";
+	//set_param
+	std::cout<<"set_param...\n";
+	vfh_mpc.set_center_point(cpt.x,cpt.y);
+	vfh_mpc.set_goal(goal_pt);
+	//--set_robot_param(float x,float y, float r,float vt0,float th_t0)
+	if(!vfh_mpc.set_robot_param(robot_odm.x,robot_odm.y,0.2,0.2,robot_odm.th+M_PI/2))//)
+	{
+		std::cout<<"Error: robot param\n";
+		return false; 
+	}
+	//--set_command_limit(float dif_vel)
+	vfh_mpc.set_command_limit(0.1);
+	// apf_mpc.set_mov_time(0.1);
+	vfh_mpc.set_mov_time(1);
+	return true;	
+}
+bool command_generator::update_RobotPos(VFH_MPC& vfh_mpc)
+{
+    //center point
+	// cv::Point2f cpt=cv::Point2f(robot_odm.x,robot_odm.y+4.0-0.1);//5.0==map_hf/2
+	// apf_mpc.set_center_point(cpt.x,cpt.y);
+	//goal point
+	cv::Point2f goal_pt=cv::Point2f(robot_odm0.x,robot_odm0.y+8.0);//10.0==map_hf/2
+	apf_mpc.set_goal(goal_pt);	
+	//--set_robot_param(float x,float y, float r,float vt0,float th_t0)
+	// if(!apf_mpc.set_robot_param(robot_odm.x,robot_odm.y,0.2,0.2,robot_odm.th))//)
+	if(!apf_mpc.update_robot_param(robot_odm.x,robot_odm.y,robot_odm.th+M_PI/2,apf_mpc.get_vel(),apf_mpc.get_ang_vel()))
+	{
+		std::cout<<"Error: robot param\n";
+		return false; 
+	}
+	return true;
+}
+
 void command_generator::update_RobotVel(float& v,float& w){
 	vrt=v;
 	wrt=w;
@@ -170,6 +225,35 @@ void command_generator::set_obstacles(APF_MPC& apf_mpc){
             }
         }
     }
+}
+void command_generator::set_obstacles(VFH_MPC& vfh_mpc) {
+
+	vfh_mpc.clear_mv_obstacle_data();//add
+	for (int i = 0; i < obj_info.objs.size(); i++)
+	{
+		if (obstacle_status[i] == MOVING_OBSTACLE) {
+			//set moving obstacles
+			std::vector<cv::Point2f> pts;
+			pts.resize(obj_info.objs[i].pt.size());
+			for (int k = 0; k < obj_info.objs[i].pt.size(); k++) {
+				pts[k].x = obj_info.objs[i].pt[k].x*obj_info.objs[i].pt[k].z / f + robot_odm.x;
+				pts[k].y = obj_info.objs[i].pt[k].z + robot_odm.y;
+			}
+			float vx = obj_info.objs[i].vel.x;
+			float vy = obj_info.objs[i].vel.z;
+			vfh_mpc.set_mv_obstacle_data(pts, vx, vy);
+		}
+		else {
+			//set static obstacles
+			for (int k = 0; k < obj_info.objs[i].pt.size(); k++) {
+				cv::Point2f obst_data;
+				obst_data.x = (obj_info.objs[i].pt[k].x - width / 2)*obj_info.objs[i].pt[k].z / f + robot_odm.x;
+				obst_data.y = obj_info.objs[i].pt[k].z + robot_odm.y;
+				// std::cout<<"obst_data:"<<obst_data<<"\n";
+				vfh_mpc.set_static_obstacle_data(obst_data);
+			}
+		}
+	}
 }
 
 //publish

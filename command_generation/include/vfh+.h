@@ -70,7 +70,7 @@ class vfh{
 		void set_obstacle_data(const cv::Point2f& data);
 		//select_angle.cpp
         void set_polar_histogram(void);
-        float select_angle(void);
+        virtual float select_angle(void);
         //controller
 		virtual void set_command_vel(float angle,float& v,float& w);
 		//debug

@@ -26,7 +26,9 @@ void vfh::set_obstacle_data(const cv::Point2f& data)
 	{
 		int ch_g = grid_map.channels();
 		uint8_t *pgrid = grid_map.ptr<uint8_t>(data_gp.y);
-		pgrid[data_gp.x * ch_g]++;
+		if (pgrid[data_gp.x * ch_g] < 255) {
+			pgrid[data_gp.x * ch_g]++;
+		}
 	}
 	else
 	{

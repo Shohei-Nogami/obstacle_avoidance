@@ -216,18 +216,18 @@ include_directories(
 #add_executable(command_generation src/avoid_cls/avoid_cls.cpp src/vfh+_cls/vfh+_class.cpp src/tm_cls/time_class.cpp )
 #target_link_libraries(command_generation ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
-add_executable(command_generation_apf src/main.cpp src/command_generator.cpp
-  #apf
-  src/apf/apf.cpp src/apf/gradient_map.cpp src/apf/path_planning.cpp src/apf/coordinate_transform.cpp src/apf/potential_map.cpp 
-  src/apf/grid_map.cpp src/apf/set_param.cpp src/apf/debug.cpp
-  #apf_mpc
-  src/apf_mpc/apf_mpc.cpp src/apf_mpc/set_data.cpp src/apf_mpc/virtual_fnc.cpp 
-  src/apf_mpc/mv_pot_map.cpp  src/apf_mpc/mpc_func.cpp src/apf_mpc/debug.cpp 
-  
-  )
-add_dependencies(command_generation_apf ${PROJECT_NAME}_generate_messages_cpp)
-add_dependencies(command_generation_apf ${PROJECT_NAME}_generate_messages_cpp)
-target_link_libraries(command_generation_apf ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+#add_executable(command_generation_apf src/main.cpp src/command_generator.cpp
+#  #apf
+#  src/apf/apf.cpp src/apf/gradient_map.cpp src/apf/path_planning.cpp src/apf/coordinate_transform.cpp src/apf/potential_map.cpp 
+#  src/apf/grid_map.cpp src/apf/set_param.cpp src/apf/debug.cpp
+#  #apf_mpc
+#  src/apf_mpc/apf_mpc.cpp src/apf_mpc/set_data.cpp src/apf_mpc/virtual_fnc.cpp 
+#  src/apf_mpc/mv_pot_map.cpp  src/apf_mpc/mpc_func.cpp src/apf_mpc/debug.cpp 
+#  
+#  )
+#add_dependencies(command_generation_apf ${PROJECT_NAME}_generate_messages_cpp)
+#add_dependencies(command_generation_apf ${PROJECT_NAME}_generate_messages_cpp)
+#target_link_libraries(command_generation_apf ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 add_executable(command_generation_vfh src/main.cpp src/command_generator.cpp
   #vfh
@@ -237,7 +237,13 @@ add_executable(command_generation_vfh src/main.cpp src/command_generator.cpp
   src/vfh+_cls/set_param.cpp
   #vfh_mpc
   src/vfh+_mpc/vfh+_mpc.cpp src/vfh+_mpc/set_data.cpp 
-  src/vfh+_mpc/mv_pot_map.cpp  src/apf_mpc/vfh+_func.cpp src/vfh+_mpc/debug.cpp 
+  src/vfh+_mpc/mv_pot_map.cpp  src/vfh+_mpc/mpc_func.cpp src/vfh+_mpc/debug.cpp 
+  #apf
+  src/apf/apf.cpp src/apf/gradient_map.cpp src/apf/path_planning.cpp src/apf/coordinate_transform.cpp src/apf/potential_map.cpp 
+  src/apf/grid_map.cpp src/apf/set_param.cpp src/apf/debug.cpp
+  #apf_mpc
+  src/apf_mpc/apf_mpc.cpp src/apf_mpc/set_data.cpp src/apf_mpc/virtual_fnc.cpp 
+  src/apf_mpc/mv_pot_map.cpp  src/apf_mpc/mpc_func.cpp src/apf_mpc/debug.cpp 
   
   )
 add_dependencies(command_generation_vfh ${PROJECT_NAME}_generate_messages_cpp)

@@ -1,12 +1,14 @@
 #include<command_generator.h>
 
-void PROCESS(command_generator& cgen, APF_MPC& apf_mpc);
-void PROCESS(command_generator& cgen, VFH_MPC& vfh_mpc);
+bool PROCESS(command_generator& cgen, APF_MPC& apf_mpc);
+bool PROCESS(command_generator& cgen, VFH_MPC& vfh_mpc);
+
+float v0=0.2;//temp
 
 int main(int argc,char **argv)
 {
-	ros::init(argc,argv,"command_genaration_apf");
-	//ros::init(argc, argv, "command_genaration_vfh");
+	// ros::init(argc,argv,"command_genaration_apf");
+	ros::init(argc, argv, "command_genaration_vfh");
     command_generator cgen;
 	//apf param
 	float W=8;
@@ -39,7 +41,6 @@ int main(int argc,char **argv)
 
 	}
 
-	float v0=0.2;//temp
 	float v_temp=0;
 	float w_temp=0;
 	cgen.update_RobotVel(v_temp,w_temp);
@@ -74,10 +75,14 @@ int main(int argc,char **argv)
 		cgen.subscribe_odometry();
 
 		if (USE_APF_MPC) {
-			PROCESS(cgen, apf_mpc);
+			if(!PROCESS(cgen, apf_mpc)){
+				break;
+			}
 		}
 		else if (USE_VFH_MPC) {
-			PROCESS(cgen, vfh_mpc);
+			if(!PROCESS(cgen, vfh_mpc)){
+				break;
+			}
 
 		}
 		//turtlebot vel pub
@@ -92,7 +97,7 @@ int main(int argc,char **argv)
 	ROS_INFO("Done...\n");
 	return 0;
 }
-void PROCESS(command_generator& cgen,APF_MPC& apf_mpc) {
+bool PROCESS(command_generator& cgen,APF_MPC& apf_mpc) {
 	//update param and init data
 	cgen.update_RobotPos(apf_mpc);
 	//apf_mpc.clear_mv_obstacle_data();
@@ -117,7 +122,7 @@ void PROCESS(command_generator& cgen,APF_MPC& apf_mpc) {
 	if (xri.x == xgi.x && xri.y == xgi.y)
 	{
 		std::cout << "Goal\n";
-		break;
+		return false;
 	}
 	//MPC		
 	ROS_INFO("get_speed");
@@ -132,7 +137,7 @@ void PROCESS(command_generator& cgen,APF_MPC& apf_mpc) {
 	if (apf_mpc.check_collision(apf_mpc.get_posf()))//collision
 	{
 		ROS_INFO("collision...\n");
-		break;
+		return false;
 	}
 
 	//ロボットの命令速度算出
@@ -144,8 +149,9 @@ void PROCESS(command_generator& cgen,APF_MPC& apf_mpc) {
 	cgen.publish_velocity(v, w);
 	cgen.publish_wheel_velocity(v, w);
 	apf_mpc.set_pub_mpc_debug_images(xri);
+	return true;
 }
-void PROCESS(command_generator& cgen, VFH_MPC& vfh_mpc) {
+bool PROCESS(command_generator& cgen, VFH_MPC& vfh_mpc) {
 
 	//update param and init data
 	cgen.update_RobotPos(vfh_mpc);
@@ -171,7 +177,7 @@ void PROCESS(command_generator& cgen, VFH_MPC& vfh_mpc) {
 	if (xri.x == xgi.x && xri.y == xgi.y)
 	{
 		std::cout << "Goal\n";
-		break;
+		return false;
 	}
 	//MPC		
 	ROS_INFO("get_speed");
@@ -184,18 +190,19 @@ void PROCESS(command_generator& cgen, VFH_MPC& vfh_mpc) {
 	if (vfh_mpc.check_collision(vfh_mpc.get_posf()))//collision
 	{
 		ROS_INFO("collision...\n");
-		break;
+		return false;
 	}
 
 	//ロボットの命令速度算出
 	float w, v;
+	float cost=0;
 	ROS_INFO("set_command_vel...\n");
-	float w, v;
 	vfh_mpc.set_polar_histogram();
-	vfh_mpc.set_command_vel(select_angle(cost), v, w);
+	vfh_mpc.set_command_vel(vfh_mpc.select_angle(cost), v, w);
 	//cgen.update_RobotVel(v,w);
 	std::cout << "v,w:" << v << "," << w << "\n";
 	cgen.publish_velocity(v, w);
 	cgen.publish_wheel_velocity(v, w);
 	vfh_mpc.set_pub_mpc_debug_images(xri);
+	return true;
 }

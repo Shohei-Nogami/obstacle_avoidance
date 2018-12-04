@@ -6,7 +6,7 @@
 #include<command_generation/robot_odm.h>
 #include<nav_msgs/Odometry.h>
 
-class VFH_MPC : public APF
+class VFH_MPC : public vfh
 {
 private:
 	float pot_x0, pot_x1;
@@ -34,6 +34,7 @@ private:
 	//debug
 	cv::Mat mpc_debug_image;
 	//cv::Mat pot_maptt;
+	std::vector<cv::Point2i> obst_pti;
 public:
 	//vfh+_mpc.cpp
 	VFH_MPC(float width, float height, float resolution);
@@ -55,16 +56,16 @@ public:
 	void add_mv_grid(void);
 	//mpc_func.cpp
 	float& get_pot_xt(const cv::Point2i& xti);
-	bool set_grad(const cv::Point2i& xti);
+	// bool set_grad(const cv::Point2i& xti);
 	double culc_cost(cv::Point2f& xrft0, const float v0, const float& time_range);
 	float get_speed(const cv::Point2f& xrft0, const float& vrt00);
 	float select_angle(float& cost);
 	//debug.cpp
 	void set_pub_mpc_debug_images(const cv::Point2i& xrit0);
 	void draw_mv_obst(void);
-	void draw_mpc_path_mat(void);
+	// void draw_mpc_path_mat(void);
 	bool check_collision(const cv::Point2f xrf00);
 	void past_time(const float& time);
-	bool set_grad0(const cv::Point2i& xti);
+	// bool set_grad0(const cv::Point2i& xti);
 };
 #endif

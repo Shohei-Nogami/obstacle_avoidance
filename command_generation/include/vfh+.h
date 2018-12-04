@@ -38,6 +38,7 @@ class vfh{
 		cv::Point2i xri;//ロボットの位置 int
 		float rr;//robot radiu
 		float vrt;//robot speed
+		float wrt;//robot angular speed
 		float th_t;//robot angular
 		float max_w;//robot angular speed (max)
 		float mv_t;//movement time(dt)
@@ -52,10 +53,18 @@ class vfh{
 		vfh(float width,float height,float resolution);
 		~vfh();
 		//set_param.cpp
+		cv::Point2f& get_posf(void);
+		cv::Point2i& get_posi(void);
+		cv::Point2f& get_goal_posf(void);
+		cv::Point2i& get_goal_posi(void);
+		float& get_ori(void);
+		float& get_vel(void);
+		float& get_ang_vel(void);
 		void set_grid_param(float width,float height,float resolution);
 		void set_center_point(float cpx,float cpy);
 		void set_goal(cv::Point2f& goal_2f);
 		bool set_robot_param(float x,float y, float r,float vt0,float th_t0);
+		bool update_robot_param(const float& x,const float& y,const float& th_t0,const float& vt0,const float& wt0);
 		void set_command_limit(float max_dif_vel);
 		void set_mov_time(float time);
 		//coordinate_transform.cpp

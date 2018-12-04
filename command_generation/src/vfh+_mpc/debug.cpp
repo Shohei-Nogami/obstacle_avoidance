@@ -66,121 +66,7 @@ void VFH_MPC::draw_mv_obst(void) {
 		}
 	}
 }
-void VFH_MPC::draw_mpc_path_mat(void)
-{
-	ros::NodeHandle n;
-	ros::Rate rate(100);
-	int obst_num = (int)obst_pti.size() + mv_data_size;
-	clear_move_data();
-	float v0 = vrt;
-	//float dt=(float)1/100;
-	float goal_time = 0;
-	std::ofstream ofss("./vel_angVel.csv", std::ios::app);
-	ofss << "time" << "," << "x" << "," << "y" << "," << "v" << "," << "w" << "," << "th_t" << "," << std::endl;
 
-	// ros::NodeHandle nh1,nh2;
-	// ros::Publisher pub1,pub2;
-	// command_generation::robot_odm robot_odm;
-	// nav_msgs::Odometry obst_odm;
-	// pub1=nh1.advertise<command_generation::robot_odm>("robot_odm",1);
-	// pub2=nh2.advertise<nav_msgs::Odometry>("obstacle_odm",1);
-
-	// obst_odm.pose.pose.position.x=3.5;
-	// obst_odm.pose.pose.position.y=0;
-	// obst_odm.pose.pose.position.z=0;
-	while (ros::ok()) {
-		// //debug
-		// robot_odm.x=xrf.x;
-		// robot_odm.y=xrf.y;
-		// obst_odm.pose.pose.position.x+=mv_t*0.2;
-		// pub1.publish(robot_odm);
-		// pub2.publish(obst_odm);
-		//float to int
-		trans_point_f_to_i(xrf, xri);
-		std::cout << "xrf,xgf:" << xrf << "-->" << xgf << "\n";
-		//ゴールセルに到達したら終了
-		if (xri.x == xgi.x && xri.y == xgi.y)
-		{
-			std::cout << "Goal\n";
-			break;
-		}
-		//MPC
-		//ROS_INFO("get_speed...\n");
-		//std::cout<<"vrt:"<<vrt<<"\n";
-		v0 = get_speed(xrf, vrt);
-		//
-		//pot_mapt=pot_map.clone();
-
-		std::cout << "v0:" << v0 << "\n";
-		/*int kk=0;
-		while(ros::ok()&&kk++<100){
-			set_pub_mpc_debug_images(xri);
-			rate.sleep();
-		}
-
-		clear_move_data();
-		kk=0;
-		while(ros::ok()&&kk++<100){
-			set_pub_mpc_debug_images(xri);
-			rate.sleep();
-		}
-		*/
-		clear_move_data();
-		//pot_mapt=pot_map.clone();
-		//ROS_INFO("add_mv_pot...\n");
-		add_mv_pot(xri, obst_num);
-		//ROS_INFO("set_grad...\n");
-		set_grad(xri);
-		if (check_collision(xrf))//collision
-		{
-			ROS_INFO("collision...\n");
-			break;
-		}
-
-		//ロボットの命令速度算出
-		float w, v;
-		ROS_INFO("set_command_vel...\n");
-		set_command_vel(xri, v0, v, w, th_t);
-		/*
-		std::cout<<"xri:"<<xri<<"\n";
-		std::cout<<"pot_xri:"<<get_pot_xt(xri)<<"\n";
-		std::cout<<"pot(x0,x1),(y0,y1):("<<pot_x0<<","<<pot_x1<<"),("<<pot_y0<<","<<pot_y1<<")\n";
-
-		std::cout<<"grad(x,y):"<<grad_xt<<","<<grad_yt<<"\n";//<--gradに問題:解決
-		*/
-		std::cout << "v0,vrt,w,th_t:" << v0 << "," << vrt << "," << w << "," << th_t << "\n";
-
-		ofss << goal_time << "," << xrf.x + cx << "," << xrf.y + cy << "," << v << "," << w << "," << th_t << "," << std::endl;
-
-		//ロボットの移動
-		//mv_t:移動時間
-		float l = v * mv_t;
-		th_t = th_t + w * mv_t;
-		xrf.x = xrf.x + l * cos(th_t);
-		xrf.y = xrf.y + l * sin(th_t);
-		//速度変化
-		//ロボットの速度は1時遅れ系で変化すると仮定
-		//目標値v0,現在速度vrt
-		float Tr = 0.25 / 1000;//マブチ3Vモータを参考
-		//vrt=vrt+(v0-vrt)*(1-exp(-Tr*dt));
-		vrt = vrt + (v0 - vrt)*(exp(-Tr * mv_t));
-		std::cout << "(1-exp(-Tr*dt)):" << (1 - exp(-Tr * mv_t)) << "\n";
-		//debug
-		//ROS_INFO("set_pub_mpc_debug_images...\n");
-		past_time(mv_t);
-		set_pub_mpc_debug_images(xri);
-		//move obstacles
-		rate.sleep();
-		goal_time += mv_t;
-	}
-	std::ofstream ofs("./goal_time.csv", std::ios::app);
-	ofs << goal_time << std::endl;
-	/*
-	while(ros::ok()){
-		std::cout<<"goal_time:"<<goal_time<<"\n";
-	}
-	*/
-}
 bool VFH_MPC::check_collision(const cv::Point2f xrf00) {
 
 	for (int n = 0; n < mv_obsts.size(); n++) {
@@ -234,6 +120,7 @@ void VFH_MPC::past_time(const float& time) {
 	}
 	//std::cout<<"void VFH_MPC::past_time(const float& time){\n";
 }
+/*
 bool VFH_MPC::set_grad0(const cv::Point2i& xti) {
 
 	//map size
@@ -313,3 +200,4 @@ bool VFH_MPC::set_grad0(const cv::Point2i& xti) {
 	}
 	return false;
 }
+*/

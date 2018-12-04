@@ -1,5 +1,27 @@
 #include<vfh+.h>
 
+cv::Point2f& vfh::get_posf(void){
+	return xrf;
+}
+cv::Point2i& vfh::get_posi(void){
+	return xri;
+}
+cv::Point2f& vfh::get_goal_posf(void){
+	return xgf;
+}
+cv::Point2i& vfh::get_goal_posi(void){
+	return xgi;
+}
+float& vfh::get_ori(void){
+	return th_t;
+}
+float& vfh::get_vel(void){
+	return vrt;
+}
+float& vfh::get_ang_vel(void){
+	return wrt;
+}
+
 void vfh::set_grid_param(float width,float height,float resolution){
 	//マップデータの設定と初期化
 	map_wf=width;
@@ -41,6 +63,23 @@ bool vfh::set_robot_param(float x,float y, float r,float vt0,float th_t0)
 	xr.y=y;
 	rr=r;
 	vrt=vt0;
+	th_t=th_t0;//反時計回り(0~360)
+	
+	if(trans_point(xr,xri,xrf))
+	{
+		//std::cout<<"xr,xri,xrf:"<<xr<<","<<xri<<","<<xrf<<"\n";
+		return true;
+	}
+	else{
+		std::cout<<"RobotPoint is not in grid map\n";
+		return false;
+	}	
+}
+bool vfh::update_robot_param(const float& x,const float& y,const float& th_t0,const float& vt0,const float& wt0){
+	xr.x=x;
+	xr.y=y;
+	vrt=vt0;
+	wrt=wt0;
 	th_t=th_t0;//反時計回り(0~360)
 	
 	if(trans_point(xr,xri,xrf))

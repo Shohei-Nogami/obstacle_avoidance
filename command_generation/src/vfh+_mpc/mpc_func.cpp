@@ -1,8 +1,9 @@
-#include<vfh_mpc.h>
+#include<vfh+_mpc.h>
 
 float& VFH_MPC::get_pot_xt(const cv::Point2i& xti) {
 	return pot_mapt.at<float>(xti.y, xti.x);
 }
+/*
 bool VFH_MPC::set_grad(const cv::Point2i& xti) {
 
 	//map size
@@ -81,9 +82,9 @@ bool VFH_MPC::set_grad(const cv::Point2i& xti) {
 	}
 	return false;
 }
-
+*/
 float VFH_MPC::select_angle(float& cost) {
-
+	float MAX_EV=10000;
 	int select_angle = min_range + (max_range - min_range) / 2;//center angle
 	float min_ev = MAX_EV;//evaluation value
 	float block_d = 1.5*1.5;//block distance^2
@@ -107,9 +108,9 @@ float VFH_MPC::select_angle(float& cost) {
 				dif_th -= 360;
 			}
 		}
-		float ev = +w1 * std::abs(dif_th)//˜_•¶‘æ1€
-			+ w2 * std::abs(i*reso_range - (max_range - min_range) / 2)//˜_•¶‘æ2€
-			- w3 * ph[i]//’Ç‰Á‚µ‚½•]‰¿®
+		float ev = +w1 * std::abs(dif_th)//ï¿½_ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½
+			+ w2 * std::abs(i*reso_range - (max_range - min_range) / 2)//ï¿½_ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½
+			- w3 * ph[i]//ï¿½Ç‰ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½]ï¿½ï¿½ï¿½ï¿½
 			;
 
 		if (min_ev > ev) {
@@ -150,7 +151,7 @@ double VFH_MPC::culc_cost(cv::Point2f& xrft0, const float v0, const float& time_
 		// ROS_INFO("add_mv_pot...while\n");
 		//add_mv_pot(xrit, obst_num);
 		add_mv_grid();
-		//ƒS[ƒ‹ƒZƒ‹‚É“’B‚µ‚½‚çI—¹
+		//ï¿½Sï¿½[ï¿½ï¿½ï¿½Zï¿½ï¿½ï¿½É“ï¿½ï¿½Bï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½ï¿½
 		if (xrit.x == xgi.x && xrit.y == xgi.y)
 		{
 			std::cout << "Goal\n";
@@ -163,7 +164,7 @@ double VFH_MPC::culc_cost(cv::Point2f& xrft0, const float v0, const float& time_
 			return -DBL_MAX * (tr / time_range);
 		}
 		
-		//ƒƒ{ƒbƒg‚Ì–½—ß‘¬“xZo
+		//ï¿½ï¿½ï¿½{ï¿½bï¿½gï¿½Ì–ï¿½ï¿½ß‘ï¿½ï¿½xï¿½Zï¿½o
 		float w, v;
 		float cost = 0;
 		set_polar_histogram();
@@ -174,13 +175,13 @@ double VFH_MPC::culc_cost(cv::Point2f& xrft0, const float v0, const float& time_
 //		set_command_vel(xrit, v0, v, w, th_t0);
 
 		//std::cout<<"v,w,th_t0:"<<v<<","<<w<<","<<th_t0<<"\n";
-		//ƒƒ{ƒbƒg‚ÌˆÚ“®
-		//mv_t:ˆÚ“®ŠÔ
+		//ï¿½ï¿½ï¿½{ï¿½bï¿½gï¿½ÌˆÚ“ï¿½
+		//mv_t:ï¿½Ú“ï¿½ï¿½ï¿½ï¿½ï¿½
 		float l = v * mv_t;
 		th_t0 = th_t0 + w * mv_t;
 		xrft.x = xrft.x + l * cos(th_t0);
 		xrft.y = xrft.y + l * sin(th_t0);
-		//áŠQ•¨‚ÌˆÚ“®
+		//ï¿½ï¿½Qï¿½ï¿½ï¿½ÌˆÚ“ï¿½
 		// ROS_INFO("move_obstacle_data...while\n");
 		move_obstacle_data(mv_t);
 		//debug
@@ -276,7 +277,7 @@ float VFH_MPC::get_speed(const cv::Point2f& xrft0, const float& vrt00)
 			break;
 		}
 		*/
-		//•Û—¯
+		//ï¿½Û—ï¿½
 		//if(grad_v>0){//cost0<cost1
 		//std::cout<<"vrt("<<vrt0<<","<<vrt1<<")\n";
 		//std::cout<<"cost("<<cost0<<","<<cost1<<")\n";

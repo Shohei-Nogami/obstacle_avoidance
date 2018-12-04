@@ -119,10 +119,10 @@ bool command_generator::update_RobotPos(VFH_MPC& vfh_mpc)
 	// apf_mpc.set_center_point(cpt.x,cpt.y);
 	//goal point
 	cv::Point2f goal_pt=cv::Point2f(robot_odm0.x,robot_odm0.y+8.0);//10.0==map_hf/2
-	apf_mpc.set_goal(goal_pt);	
+	vfh_mpc.set_goal(goal_pt);	
 	//--set_robot_param(float x,float y, float r,float vt0,float th_t0)
 	// if(!apf_mpc.set_robot_param(robot_odm.x,robot_odm.y,0.2,0.2,robot_odm.th))//)
-	if(!apf_mpc.update_robot_param(robot_odm.x,robot_odm.y,robot_odm.th+M_PI/2,apf_mpc.get_vel(),apf_mpc.get_ang_vel()))
+	if(!vfh_mpc.update_robot_param(robot_odm.x,robot_odm.y,robot_odm.th+M_PI/2,vfh_mpc.get_vel(),vfh_mpc.get_ang_vel()))
 	{
 		std::cout<<"Error: robot param\n";
 		return false; 

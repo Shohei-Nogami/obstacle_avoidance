@@ -56,9 +56,9 @@ void VFH_MPC::add_mv_grid(void) {
 				int ch_g = grid_mapt.channels();
 				uint8_t *pgt = grid_mapt.ptr<uint8_t>(pti.y);
 				if (pgt[pti.x * ch_g] == 0) {
-					if (pgt[pti.x * ch_g] < 255) {
-						pgt[pti.x * ch_g]++;
-					}
+					// if (pgt[pti.x * ch_g] < 255) {
+						pgt[pti.x * ch_g]=255;
+					// }
 				}
 			}
 		}

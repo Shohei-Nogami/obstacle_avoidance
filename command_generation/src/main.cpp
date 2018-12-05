@@ -16,7 +16,7 @@ int main(int argc,char **argv)
 	float reso=0.15;
 	//USED FUNCTION FLAG
 	bool USE_APF_MPC = true;
-	bool USE_VFH_MPC = false;
+	bool USE_VFH_MPC = true;
 
 	//first odometry 
 	std::cout << "waiting first odometry\n";
@@ -198,7 +198,7 @@ bool PROCESS(command_generator& cgen, VFH_MPC& vfh_mpc) {
 	float cost=0;
 	ROS_INFO("set_command_vel...\n");
 	vfh_mpc.set_polar_histogram();
-	vfh_mpc.set_command_vel(vfh_mpc.select_angle(cost), v, w);
+	vfh_mpc.set_command_vel(vfh_mpc.select_angle(cost,vfh_mpc.get_ori()), v, w);
 	//cgen.update_RobotVel(v,w);
 	std::cout << "v,w:" << v << "," << w << "\n";
 	cgen.publish_velocity(v, w);

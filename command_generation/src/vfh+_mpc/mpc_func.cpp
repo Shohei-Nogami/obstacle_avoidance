@@ -83,7 +83,7 @@ bool VFH_MPC::set_grad(const cv::Point2i& xti) {
 	return false;
 }
 */
-float VFH_MPC::select_angle(float& cost) {
+float VFH_MPC::select_angle(float& cost,float& th_t0) {
 	float MAX_EV=10000;
 	int select_angle = min_range + (max_range - min_range) / 2;//center angle
 	float min_ev = MAX_EV;//evaluation value
@@ -93,12 +93,12 @@ float VFH_MPC::select_angle(float& cost) {
 	float w3 = 1 / (map_hf - cy);
 	//select angle
 	for (int i = 0; i < ph.size(); i++) {
-		std::cout << "ph[" << i << "]:" << ph[i] << "\n";
+		// std::cout << "ph[" << i << "]:" << ph[i] << "\n";
 		if (block_d > ph[i]) {
 			continue;
 		}
 		float th_p = std::atan2((xgf.y - xrf.y), (xgf.x - xrf.x)) * 180 / M_PI;
-		float th_s = th_t * 180 / M_PI + i * reso_range - (max_range - min_range) / 2;
+		float th_s = th_t0 * 180 / M_PI + i * reso_range - (max_range - min_range) / 2;
 		float dif_th = th_p - th_s;
 		if (std::abs(dif_th) > 180) {
 			if (dif_th < 0) {
@@ -168,7 +168,7 @@ double VFH_MPC::culc_cost(cv::Point2f& xrft0, const float v0, const float& time_
 		float w, v;
 		float cost = 0;
 		set_polar_histogram();
-		set_command_vel(select_angle(cost), v, w);
+		set_command_vel(select_angle(cost,th_t0), v, w);
 		//add cost
 		sum_cost += cost;
 //		float w, v;
@@ -186,7 +186,7 @@ double VFH_MPC::culc_cost(cv::Point2f& xrft0, const float v0, const float& time_
 		move_obstacle_data(mv_t);
 		//debug
 		// ROS_INFO("set_pub_mpc_debug_images()\n");
-		//set_pub_mpc_debug_images(xrit);	
+		// set_pub_mpc_debug_images(xrit);	
 		//rate.sleep();
 
 		/*

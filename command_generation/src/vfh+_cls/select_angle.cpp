@@ -48,7 +48,7 @@ float vfh::select_angle(void){
 	float w3=1/(map_hf-cy);
 	//select angle
 	for(int i=0;i<ph.size();i++){
-		std::cout<<"ph["<<i<<"]:"<<ph[i]<<"\n";
+		// std::cout<<"ph["<<i<<"]:"<<ph[i]<<"\n";
 		if(block_d>ph[i]){
 			continue;
 		}

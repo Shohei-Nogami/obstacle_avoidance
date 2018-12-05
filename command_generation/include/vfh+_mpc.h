@@ -59,7 +59,7 @@ public:
 	// bool set_grad(const cv::Point2i& xti);
 	double culc_cost(cv::Point2f& xrft0, const float v0, const float& time_range);
 	float get_speed(const cv::Point2f& xrft0, const float& vrt00);
-	float select_angle(float& cost);
+	float select_angle(float& cost,float& th_t0);
 	//debug.cpp
 	void set_pub_mpc_debug_images(const cv::Point2i& xrit0);
 	void draw_mv_obst(void);

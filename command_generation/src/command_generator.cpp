@@ -14,6 +14,8 @@ command_generator::command_generator()
 
 	pub1 = nhp1.advertise<command_generation::select_theta>("command_vel", 1);
 	pub2 = nhp2.advertise<wheel_control::wheel_msg>("vel_data", 1);
+	pub_cmdVel = nhp1.advertise<geometry_msgs::Twist>("beego/cmd_vel", 1);
+
 	vrt=0;
 	wrt=0;
 }
@@ -259,10 +261,23 @@ void command_generator::set_obstacles(VFH_MPC& vfh_mpc) {
 //publish
 void command_generator::publish_velocity(float& v,float w)
 {
-	command_generation::select_theta pub_data;
-	pub_data.select_theta=w;
-	pub_data.select_vel=v;
-	pub1.publish(pub_data);
+	bool new_robot=true;
+	if(new_robot){
+		geometry_msgs::Twist pub_data;
+		pub_data.linear.x=v;
+		pub_data.linear.y=0;
+		pub_data.linear.z=0;
+		pub_data.angular.x=0;
+		pub_data.angular.y=0;
+		pub_data.angular.z=w;
+		pub_cmdVel.publish(pub_data);
+	}
+	else{
+		command_generation::select_theta pub_data;
+		pub_data.select_theta=w;
+		pub_data.select_vel=v;
+		pub1.publish(pub_data);
+	}
 }
 void command_generator::publish_wheel_velocity(float& v,float w)
 {

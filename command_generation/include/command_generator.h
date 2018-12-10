@@ -29,7 +29,7 @@ class command_generator {
     private:
         //ros publisher subscriber
         ros::NodeHandle nhp1,nhp2,nhs,nhs2;
-        ros::Publisher pub1,pub2;
+        ros::Publisher pub1,pub2,pub_cmdVel;
         ros::Subscriber sub,sub2;
         ros::CallbackQueue queue,queue2;
 

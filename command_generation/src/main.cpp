@@ -15,14 +15,25 @@ int main(int argc,char **argv)
 	float H=8;
 	float reso=0.15;
 	//USED FUNCTION FLAG
-	bool USE_APF_MPC = true;
+	bool USE_APF_MPC = false;
 	bool USE_VFH_MPC = true;
 
+
+	//read launch param
+	ros::NodeHandle node_private("~");
+	bool initFlag;
+	if(node_private.getParam("avoidance_type_flag",initFlag)){
+		ROS_INFO_STREAM("read flag"<<initFlag);
+		USE_APF_MPC = initFlag;
+		USE_VFH_MPC = !initFlag;
+	}
+	else{
+		ROS_ERROR_STREAM("Failed to get avoidance_type_flag at:"<<ros::this_node::getName());
+	}
 	//first odometry 
 	std::cout << "waiting first odometry\n";
 	cgen.subscribe_odometry();
-
-	//
+	
 	APF_MPC apf_mpc(W, H, reso);//10,10,0.1);
 	VFH_MPC vfh_mpc(W, H, reso);//10,10,0.1);
 
@@ -38,9 +49,7 @@ int main(int argc,char **argv)
 			ROS_INFO("Setting failed!");
 			return -1;
 		}
-
 	}
-
 	float v_temp=0;
 	float w_temp=0;
 	cgen.update_RobotVel(v_temp,w_temp);
@@ -59,7 +68,7 @@ int main(int argc,char **argv)
 	turtlebot_vel.angular.x=0;
 	turtlebot_vel.angular.y=0;
 	turtlebot_vel.angular.z=0;
-
+	
 	int i=0;
 	ros::Rate r=1;
 
@@ -68,7 +77,7 @@ int main(int argc,char **argv)
 		pub2.publish(empty_msg);
 		r.sleep();
 	}
-	
+	ROS_INFO("Into process!");
     while(ros::ok()){
 		//subscribe data
 		cgen.subscribe_objects();
@@ -83,18 +92,18 @@ int main(int argc,char **argv)
 			if(!PROCESS(cgen, vfh_mpc)){
 				break;
 			}
-
 		}
 		//turtlebot vel pub
 		//pub.publish(turtlebot_vel);
-		
 	}
+	/*
     float v=0;
     float w=0;
 	cgen.publish_velocity(v,w);
 	turtlebot_vel.linear.x=0;
 	pub.publish(turtlebot_vel);
 	ROS_INFO("Done...\n");
+	*/
 	return 0;
 }
 bool PROCESS(command_generator& cgen,APF_MPC& apf_mpc) {
@@ -116,7 +125,7 @@ bool PROCESS(command_generator& cgen,APF_MPC& apf_mpc) {
 	ROS_INFO("trans_point_f_to_i");
 	apf_mpc.trans_point_f_to_i(apf_mpc.get_posf(), apf_mpc.get_posi());
 	std::cout << "xrf,xgf:" << apf_mpc.get_posf() << "-->" << apf_mpc.get_goal_posf() << "\n";
-	//ゴールセルに到達したら終
+	//ゴールセルに到達したら終了
 	cv::Point xri = apf_mpc.get_posi();
 	cv::Point xgi = apf_mpc.get_goal_posi();
 	if (xri.x == xgi.x && xri.y == xgi.y)
@@ -124,7 +133,7 @@ bool PROCESS(command_generator& cgen,APF_MPC& apf_mpc) {
 		std::cout << "Goal\n";
 		return false;
 	}
-	//MPC		
+	//MPC
 	ROS_INFO("get_speed");
 	v0 = apf_mpc.get_speed(apf_mpc.get_posf(), apf_mpc.get_vel());
 	ROS_INFO("clear_move_data");
@@ -158,7 +167,7 @@ bool PROCESS(command_generator& cgen, VFH_MPC& vfh_mpc) {
 	//apf_mpc.clear_mv_obstacle_data();
 	vfh_mpc.clear_grid_map();
 	//recognize obstacle state(
-	if (cgen.dicriminate_obstacle()) {
+	if(cgen.dicriminate_obstacle()){
 		cgen.set_obstacles(vfh_mpc);
 	}
 	//create potential map
@@ -179,14 +188,19 @@ bool PROCESS(command_generator& cgen, VFH_MPC& vfh_mpc) {
 		std::cout << "Goal\n";
 		return false;
 	}
-	//MPC		
+	//MPC
+	
 	ROS_INFO("get_speed");
 	v0 = vfh_mpc.get_speed(vfh_mpc.get_posf(), vfh_mpc.get_vel());
+	std::cout<<"v0:"<<v0<<"\n";
 	ROS_INFO("clear_move_data");
 	vfh_mpc.clear_move_data();
+	
 	ROS_INFO("add_mv_pot");
-	vfh_mpc.add_mv_grid();
+	//vfh_mpc.add_mv_grid();
+	vfh_mpc.add_mv_grid(vfh_mpc.get_grid_map()); 
 	ROS_INFO("check_collision");
+	
 	if (vfh_mpc.check_collision(vfh_mpc.get_posf()))//collision
 	{
 		ROS_INFO("collision...\n");
@@ -196,8 +210,9 @@ bool PROCESS(command_generator& cgen, VFH_MPC& vfh_mpc) {
 	//ロボットの命令速度算出
 	float w, v;
 	float cost=0;
+	v=v0;
 	ROS_INFO("set_command_vel...\n");
-	vfh_mpc.set_polar_histogram();
+	vfh_mpc.set_polar_histogram(vfh_mpc.get_grid_map());
 	vfh_mpc.set_command_vel(vfh_mpc.select_angle(cost,vfh_mpc.get_ori()), v, w);
 	//cgen.update_RobotVel(v,w);
 	std::cout << "v,w:" << v << "," << w << "\n";

@@ -43,7 +43,7 @@ void vfh::set_command_vel(float angle,float& v,float& w)
 		//float dif_v = w*2*d;
 		//v=vrt-std::abs(dif_v)/2;
 		//速度は一定
-		v=vrt;
+		//v=vrt;
 		std::cout<<"v,w,th,th_t:"<<v<<","<<w<<","<<angle*180/M_PI<<","<<th_t*180/M_PI<<"\n";
 
 }

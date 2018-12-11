@@ -93,7 +93,7 @@ void odometry_class::set_velocity(void){
 	}
 	*/
 	v=wocls.get_velocity();
-	w=wocls.get_angular_velocity();
+	w=wcls.get_angular_velocity();
 }
 // void odometry_class::set_odometry(void){
 // 	tm_odm.set_time();

@@ -30,7 +30,7 @@ void APF::set_obstacle_data(const cv::Point2f& data)
 	}
 	else
 	{
-		std::cout<<"ObstPoint is not in grid map\n";
+		//std::cout<<"ObstPoint is not in grid map\n";
 	}
 }
 

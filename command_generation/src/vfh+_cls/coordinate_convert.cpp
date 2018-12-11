@@ -50,6 +50,7 @@ void vfh::trans_point_grid_to_polor(const int xg,const int yg,float& d,float& th
 	float yg0 = map_hf/2 - yg*reso;
 	d=(xg0-xrf.x)*(xg0-xrf.x)+(yg0-xrf.y)*(yg0-xrf.y);
 	th=std::atan2((yg0-xrf.y),(xg0-xrf.x));
+	//std::cout<<"(xg0-xrf.x),(yg0-xrf.y):"<<(xg0-xrf.x)<<","<<(yg0-xrf.y)<<"\n";
 	//std::cout<<"xr,xg,d,th:"<<xrf<<",("<<xg0<<","<<yg0<<"),"<<d<<","<<th<<"\n";
 }
 

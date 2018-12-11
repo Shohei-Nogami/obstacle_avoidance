@@ -148,7 +148,7 @@ double APF_MPC::culc_cost(cv::Point2f& xrft0,const float v0,const float& time_ra
 		move_obstacle_data(mv_t);
 		//debug
 		// ROS_INFO("set_pub_mpc_debug_images()\n");
-		//set_pub_mpc_debug_images(xrit);	
+		set_pub_mpc_debug_images(xrit);	
 		//rate.sleep();
 		
 		/*

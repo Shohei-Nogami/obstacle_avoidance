@@ -42,7 +42,6 @@ class visual_odometry_class{
 		void turn_first_delta_process_flag(void);
 		void subscribe_odometry(void);
 		void set_odometry(void);//<-use
-		void set_odometry_kai(void);
 		void get_cur_odometry(double& x,double& y,double& z,double& r,double& p,double& yw);//<-use
 		void get_pre_odometry(double& x,double& y,double& z,double& r,double& p,double& yw);//<-use
 		void get_delta_odometry(double& return_dx,double& return_dz,double& return_dyaw);//<-use

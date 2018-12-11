@@ -2,7 +2,7 @@
  
 void APF_MPC::set_pub_mpc_debug_images(const cv::Point2i& xrit0)
 {
-	/*
+	
 	int W=map_wi;
 	int H=map_hi;
 	mpc_debug_image = cv::Mat::zeros(cv::Size(map_hi,map_wi), CV_8UC3);
@@ -32,7 +32,7 @@ void APF_MPC::set_pub_mpc_debug_images(const cv::Point2i& xrit0)
 			//set path
 		}	
 	}
-	*/
+	
 	mpc_debug_image.at<cv::Vec3b>(xrit0.y,xrit0.x)[0] =255;
 	mpc_debug_image.at<cv::Vec3b>(xrit0.y,xrit0.x)[1] =255;
 	mpc_debug_image.at<cv::Vec3b>(xrit0.y,xrit0.x)[2] =255;
@@ -45,7 +45,7 @@ void APF_MPC::set_pub_mpc_debug_images(const cv::Point2i& xrit0)
 }
 void APF_MPC::draw_mv_obst(void){
 	//std::cout<<"void APF_MPC::draw_mv_obst(void){\n";
-	//std::cout<<"mv_obsts.size():"<<mv_obsts.size()<<"\n";
+	std::cout<<"mv_obsts.size():"<<mv_obsts.size()<<"\n";
 	for(int n=0;n<mv_obsts.size();n++){
 		cv::Point2i pti;
 		//std::cout<<"mv_obsts[n].data.size():"<<mv_obsts[n].data.size()<<"\n";

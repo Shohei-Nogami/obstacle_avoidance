@@ -40,7 +40,7 @@ float VFH_MPC::culc_mv_obstacle_fr(const cv::Point2i xti, const int& obstNum) {
 }
 */
 void VFH_MPC::add_mv_grid(void) {
-
+	
 	for (int n = 0; n < mv_obsts.size(); n++) {
 		cv::Point2i pti;
 		for (int k = 0; k < mv_obsts[n].data.size(); k++)
@@ -50,16 +50,39 @@ void VFH_MPC::add_mv_grid(void) {
 			pt.y += mv_obsts[n].mvy;
 			pt.x += mv_obsts[n].mvxt;
 			pt.y += mv_obsts[n].mvyt;
-			pt.y += mv_obsts[n].mvyt;
 			if (trans_point(pt, pti))
 			{
 				int ch_g = grid_mapt.channels();
 				uint8_t *pgt = grid_mapt.ptr<uint8_t>(pti.y);
-				if (pgt[pti.x * ch_g] == 0) {
-					// if (pgt[pti.x * ch_g] < 255) {
+				//if (pgt[pti.x * ch_g] == 0) {
+					 if (pgt[pti.x * ch_g] < 255) {
 						pgt[pti.x * ch_g]=255;
-					// }
-				}
+					 }
+				//}
+			}
+		}
+	}
+}
+void VFH_MPC::add_mv_grid(cv::Mat& grid_map_temp) {
+	
+	for (int n = 0; n < mv_obsts.size(); n++) {
+		cv::Point2i pti;
+		for (int k = 0; k < mv_obsts[n].data.size(); k++)
+		{
+			cv::Point2f pt = mv_obsts[n].data[k];
+			pt.x += mv_obsts[n].mvx;
+			pt.y += mv_obsts[n].mvy;
+			pt.x += mv_obsts[n].mvxt;
+			pt.y += mv_obsts[n].mvyt;
+			if (trans_point(pt, pti))
+			{
+				int ch_g = grid_map_temp.channels();
+				uint8_t *pgt = grid_map_temp.ptr<uint8_t>(pti.y);
+				//if (pgt[pti.x * ch_g] == 0) {
+					 if (pgt[pti.x * ch_g] < 255) {
+						pgt[pti.x * ch_g]=255;
+					 }
+				//}
 			}
 		}
 	}

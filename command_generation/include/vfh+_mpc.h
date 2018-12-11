@@ -47,6 +47,7 @@ public:
 	void move_obstacle_data(float& time);
 	void clear_move_data(void);
 	int get_obst_num(void);
+	cv::Mat& get_grid_map(void);
 	//grid_map.cpp in apf class sources
 	////void set_command_vel(cv::Point2i& xri0,float& w);
 	//void set_command_vel(const cv::Point2i& xri0, const float& v0, float& v, float& w, float& th_t0);
@@ -54,8 +55,10 @@ public:
 	//float culc_mv_obstacle_fr(const cv::Point2i xti, const int& obstNum);
 	//void add_mv_pot(const cv::Point2i xti, const int& obstNum);
 	void add_mv_grid(void);
+	void add_mv_grid(cv::Mat& grid_map_temp);
 	//mpc_func.cpp
 	float& get_pot_xt(const cv::Point2i& xti);
+	void set_polar_histogram(cv::Mat& grid_map_temp);
 	// bool set_grad(const cv::Point2i& xti);
 	double culc_cost(cv::Point2f& xrft0, const float v0, const float& time_range);
 	float get_speed(const cv::Point2f& xrft0, const float& vrt00);

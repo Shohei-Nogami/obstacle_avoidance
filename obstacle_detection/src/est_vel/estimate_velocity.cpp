@@ -8,7 +8,7 @@ estimate_velocity::estimate_velocity()
   pub_pcl = nh_pcl.advertise<sensor_msgs::PointCloud2>("clusted_cloud2", 1);
 	pub_pcl2 = nh_pcl.advertise<sensor_msgs::PointCloud2>("static_or_moving_cluster", 1);
 
-	pub2 = nh_pub2.advertise<obst_avoid::filted_objects_info>("filted_objects_info", 1);
+	pub2 = nh_pub2.advertise<obstacle_detection::filted_objects_info>("filted_objects_info", 1);
 	//calmanfilter parameter
 
 	//Eigen::MatrixXd sig_ut(6,6);
@@ -118,7 +118,7 @@ void estimate_velocity::subscribe_objects(void)
 }
 
 
-void estimate_velocity::objects_callback(const obst_avoid::objects_info::ConstPtr& msg)
+void estimate_velocity::objects_callback(const obstacle_detection::objects_info::ConstPtr& msg)
 {
 	std::cout<<"aa\n";
 	if(pre_objs.obj.size())
@@ -994,7 +994,7 @@ void estimate_velocity::publish_pointcloud_ex(void)
 
 void estimate_velocity::publish_filted_objects_info(void)
 {
-	obst_avoid::filted_objects_info obj_info;
+	obstacle_detection::filted_objects_info obj_info;
 
 	obj_info.objs.resize(cur_objs.obj.size());
 

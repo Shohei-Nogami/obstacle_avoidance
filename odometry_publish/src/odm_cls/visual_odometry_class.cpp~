@@ -36,16 +36,6 @@ void visual_odometry_class::set_odometry(void){
 	subscribe_odometry();
 	turn_first_process_flag();
 }
-
-//new_beego
-void visual_odometry_class::set_odometry_kai(void){
-	if(is_cur_odometry()){
-		set_pre_odometry();
-	}
-	subscribe_odometry();
-	turn_first_process_flag();
-}
-
 void visual_odometry_class::get_cur_odometry(double& x,double& y,double& z,double& r,double& p,double& yw){
 	x=position_x;
 	y=position_y;

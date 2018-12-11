@@ -83,6 +83,56 @@ bool VFH_MPC::set_grad(const cv::Point2i& xti) {
 	return false;
 }
 */
+void VFH_MPC::set_polar_histogram(cv::Mat& grid_map_temp){
+	int W=map_wi;
+	int H=map_hi;
+	float max_polar=std::sqrt(map_hf*map_hf+map_wf*map_wf);
+	//init polor
+	for(int i=0;i<ph.size();i++){
+		ph[i]=max_polar;
+	}
+	//std::cout<<"ph.size():"<<ph.size()<<"\n";
+	// std::cout<<"min,th,max:"<<th_t*180/M_PI-(max_range-min_range)/2
+	// 	<<","<<th_t*180/M_PI<<","<<th_t*180/M_PI+(max_range-min_range)/2<<"\n";
+	//conv grid to polor
+	for(int h=0;h<H;h++){
+		uint8_t *pg = grid_map_temp.ptr<uint8_t>(h);
+		for(int w=0;w<W;w++){
+			if(pg[w]>0){
+				float d,th;
+				trans_point_grid_to_polor(w,h,d,th);
+				//std::cout<<"w,h,d,th:"<<w<<","<<h<<","<<d<<","<<th<<"\n";
+				//th=(th+th_t)*180/M_PI;
+				//th=(th-th_t)*180/M_PI;
+				th=th*180/M_PI;
+				//std::cout<<"th_t:"<<th_t*180/M_PI<<"\n";
+				//std::cout<<th_t*180/M_PI-(max_range-min_range)/2<<"<"<<th<<"<"<<th_t*180/M_PI+(max_range-min_range)/2<<"\n";
+				if(th<th_t*180/M_PI-(max_range-min_range)/2
+					||th>th_t*180/M_PI+(max_range-min_range)/2){
+					continue;
+				}
+				//conv th(float) to thi(int)
+				int thi=(int)(th-(th_t*180/M_PI-(max_range-min_range)/2) );
+				//std::cout<<"th,thi,d:"<<th<<","<<thi<<","<<d<<"\n";
+				//float dth=std::atan2(d,cr+rr)*180/M_PI;
+				float margin_r=0.2;
+				float dth=std::atan2(cr+rr+margin_r,d)*180/M_PI;
+				int dthi=(int)dth+1;
+				//std::cout<<"dth:"<<dth<<"\n";
+				for(int k=0;k<dthi*2;k++){
+					int block_th=thi+k-dth;
+					if(block_th<0||block_th>=(int)ph.size()){
+						continue;
+					}
+					if(ph[block_th]<0 || ph[block_th]>d){
+						ph[block_th]=d;
+					}
+				}
+			}
+		}
+	}
+}
+
 float VFH_MPC::select_angle(float& cost,float& th_t0) {
 	float MAX_EV=10000;
 	int select_angle = min_range + (max_range - min_range) / 2;//center angle
@@ -93,7 +143,7 @@ float VFH_MPC::select_angle(float& cost,float& th_t0) {
 	float w3 = 1 / (map_hf - cy);
 	//select angle
 	for (int i = 0; i < ph.size(); i++) {
-		// std::cout << "ph[" << i << "]:" << ph[i] << "\n";
+		//std::cout << "ph[" << i << "]:" << ph[i] << "\n";
 		if (block_d > ph[i]) {
 			continue;
 		}
@@ -136,10 +186,11 @@ double VFH_MPC::culc_cost(cv::Point2f& xrft0, const float v0, const float& time_
 	//init mv data
 	clear_move_data();
 	int obst_num = (int)obst_pti.size() + mv_data_size;
-	// ROS_INFO("culc_cost...while\n");
+	ROS_INFO("culc_cost...while\n");
 	//std::cout<<"xrft0,xrft:"<<xrft0<<","<<xrft<<"\n";
 	//std::cout<<"xrit,xri:"<<xrft0<<","<<xrft<<"\n";
 	float vrate = 2;
+	cv::Mat grid_map_t;
 	while (ros::ok() && tr > 0)
 	{
 		//float to int
@@ -147,10 +198,13 @@ double VFH_MPC::culc_cost(cv::Point2f& xrft0, const float v0, const float& time_
 		//std::cout<<"xrft,xgf:"<<xrft<<"-->"<<xgf<<"\n";
 		//set pot map(t)
 //		pot_mapt = pot_map.clone();
-		grid_mapt = grid_map.clone();
-		// ROS_INFO("add_mv_pot...while\n");
+//		grid_mapt = grid_map.clone();
+		grid_map_t = grid_map.clone();
+		
+		ROS_INFO("add_mv_pot...while\n");
 		//add_mv_pot(xrit, obst_num);
-		add_mv_grid();
+		//add_mv_grid();
+		add_mv_grid(grid_map_t);		
 		//�S�[���Z���ɓ��B������I��
 		if (xrit.x == xgi.x && xrit.y == xgi.y)
 		{
@@ -167,8 +221,11 @@ double VFH_MPC::culc_cost(cv::Point2f& xrft0, const float v0, const float& time_
 		//���{�b�g�̖��ߑ��x�Z�o
 		float w, v;
 		float cost = 0;
-		set_polar_histogram();
+		//set_polar_histogram();
+		set_polar_histogram(grid_map_t);
+		
 		set_command_vel(select_angle(cost,th_t0), v, w);
+		std::cout<<"set_command_vel(select_angle(cost,th_t0), v, w);\n";
 		//add cost
 		sum_cost += cost;
 //		float w, v;
@@ -177,16 +234,17 @@ double VFH_MPC::culc_cost(cv::Point2f& xrft0, const float v0, const float& time_
 		//std::cout<<"v,w,th_t0:"<<v<<","<<w<<","<<th_t0<<"\n";
 		//���{�b�g�̈ړ�
 		//mv_t:�ړ�����
+		std::cout<<"float l = v * mv_t;\n";
 		float l = v * mv_t;
 		th_t0 = th_t0 + w * mv_t;
 		xrft.x = xrft.x + l * cos(th_t0);
 		xrft.y = xrft.y + l * sin(th_t0);
 		//��Q���̈ړ�
-		// ROS_INFO("move_obstacle_data...while\n");
+		ROS_INFO("move_obstacle_data...while\n");
 		move_obstacle_data(mv_t);
 		//debug
 		// ROS_INFO("set_pub_mpc_debug_images()\n");
-		// set_pub_mpc_debug_images(xrit);	
+		set_pub_mpc_debug_images(xrit);	
 		//rate.sleep();
 
 		/*
@@ -204,6 +262,7 @@ double VFH_MPC::culc_cost(cv::Point2f& xrft0, const float v0, const float& time_
 		*/
 
 		tr -= mv_t;
+		ROS_INFO("end...while\n");
 	}
 	/*
 	cv::Point2f del=xrft-xrft0;

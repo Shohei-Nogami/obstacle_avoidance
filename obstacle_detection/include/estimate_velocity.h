@@ -5,8 +5,10 @@
 #include<opencv2/imgproc/imgproc.hpp>
 //#include"obst_avoid/point3d.h"
 //#include"obst_avoid/object_info.h"
-#include"obst_avoid/objects_info.h"
-#include"obst_avoid/filted_objects_info.h"
+//#include"obst_avoid/objects_info.h"
+//#include"obst_avoid/filted_objects_info.h"
+#include"obstacle_detection/objects_info.h"
+#include"obstacle_detection/filted_objects_info.h"
 //#include"obst_avoid/filted_object_info.h"
 //#include"obst_avoid/cluster_point.h"
 
@@ -23,11 +25,11 @@ class estimate_velocity{
 		ros::Subscriber sub;
 		ros::CallbackQueue queue;
 
-		obst_avoid::objects_info cur_objs;
-		obst_avoid::object_info obj;
+		obstacle_detection::objects_info cur_objs;
+		obstacle_detection::object_info obj;
 
-		obst_avoid::objects_info pre_objs;
-		obst_avoid::objects_info prepre_objs;
+		obstacle_detection::objects_info pre_objs;
+		obstacle_detection::objects_info prepre_objs;
 
 
 		std::vector<cv::Point3f> vel_h;
@@ -71,7 +73,7 @@ class estimate_velocity{
 		~estimate_velocity();
 
 		void subscribe_objects(void);
-		void objects_callback(const obst_avoid::objects_info::ConstPtr& msg);
+		void objects_callback(const obstacle_detection::objects_info::ConstPtr& msg);
 		bool culculate_velocity(void);
 		void culculate_accelerate(void);
 

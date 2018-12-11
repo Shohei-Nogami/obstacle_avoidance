@@ -54,6 +54,8 @@ find_package(catkin REQUIRED COMPONENTS
    FILES
    point2d.msg
    robot_odm.msg
+   wheel_msg.msg
+   vel.msg
 #   Message1.msg
 #   Message2.msg
  )

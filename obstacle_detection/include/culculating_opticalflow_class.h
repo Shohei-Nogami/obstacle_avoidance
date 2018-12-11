@@ -10,11 +10,11 @@
 #include <ros/callback_queue.h>
 
 //#include"obst_avoid/point3d.h"
-#include"obst_avoid/vel3d.h"
+#include"obstacle_detection/vel3d.h"
 //#include"obst_avoid/img_point.h"
 
 //#include"obst_avoid/points.h"
-#include"obst_avoid/matching.h"
+#include"obstacle_detection/matching.h"
 
 class culculate_optical_flow
 {
@@ -66,13 +66,13 @@ class culculate_optical_flow
 		std::vector<cv::Point2f> jnewpoints;
 		std::vector<int> tracking_count_p;
 		std::vector<int> tracking_count;
-		::obst_avoid::vel3d vX;
+		::obstacle_detection::vel3d vX;
 		cv::Mat view_image;
 
 		//add 0524
 		cv::Point3f clp_vel_ave_pre[18][28];
 		//publish message
-		::obst_avoid::matching match_msg;
+		::obstacle_detection::matching match_msg;
 	public:
 		culculate_optical_flow();
 		virtual ~culculate_optical_flow();

@@ -3,7 +3,7 @@
 VFH_MPC::VFH_MPC(float width, float height, float resolution)
 	:mv_obsts_size(0), mv_data_size(0)
 {
-	std::cout << "APF_MPC\n";
+	std::cout << "VFH_MPC\n";
 	set_grid_param(width, height, resolution);
 	mv_obsts.resize((int)(width / resolution * height / resolution));
 	//debug

@@ -66,11 +66,11 @@ void wheel_odometry_class::set_delta_orientetion(double& dt){
 	dyaw=w*dt;
 }
 void wheel_odometry_class::define_variable(void){	
-	pub=nh_pub.advertise<obst_avoid::wheel_msg>("wheel_odometry",1);
+	pub=nh_pub.advertise<obstacle_detection::wheel_msg>("wheel_odometry",1);
 	nh_sub.setCallbackQueue(&queue);
 	sub=nh_sub.subscribe("/wheel_data",1,&wheel_odometry_class::wheel_odometry_callback,this);
 }
-void wheel_odometry_class::wheel_odometry_callback(const obst_avoid::wheel_msg::ConstPtr& msg){
+void wheel_odometry_class::wheel_odometry_callback(const obstacle_detection::wheel_msg::ConstPtr& msg){
 	//tm_wlodm.set_time();
 	vr_i=msg->vel_r;
 	vl_i=msg->vel_l;

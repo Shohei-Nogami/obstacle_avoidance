@@ -2,42 +2,59 @@
 
 void VFH_MPC::set_pub_mpc_debug_images(const cv::Point2i& xrit0)
 {
-	/*
+	
 	int W=map_wi;
 	int H=map_hi;
 	mpc_debug_image = cv::Mat::zeros(cv::Size(map_hi,map_wi), CV_8UC3);
+	
 	//mpc_debug_image = cv::Mat::zeros(cv::Size(map_hi,map_wi), CV_8UC3);
 	for(int h0=0;h0<H;h0++){
-		float *pd = pot_map.ptr<float>(h0);
+		uint8_t *pd = grid_map.ptr<uint8_t>(h0);
 		cv::Vec3b *p3d = mpc_debug_image.ptr<cv::Vec3b>(h0);
 		for(int w0=0;w0<W;w0++){
-			//set potential
-			//float pot=pot_mapt.at<float>(h0,w0);//*std::abs(sum_pot);
-			// float pot=pot_map.at<float>(h0,w0);//*std::abs(sum_pot);
-			float pot=pd[w0];
-			//std::cout<<"pot:"<<pot<<"\n";
+			uint8_t pot=pd[w0];
 			if(pot>0)
 			{
-				// mpc_debug_image.at<cv::Vec3b>(h0,w0)[2] =pot*255;
-				p3d[w0][2]=pot*255;
+				p3d[w0][2]=255;
 			}
 			else
 			{
-				// mpc_debug_image.at<cv::Vec3b>(h0,w0)[0] =(-pot)*255;
-				// mpc_debug_image.at<cv::Vec3b>(h0,w0)[1] =(-pot)*255;
-				p3d[w0][0]=(-pot)*255;
-				p3d[w0][1]=(-pot)*255;
 
 			}
-			//set path
 		}
 	}
-	*/
+	
 	mpc_debug_image.at<cv::Vec3b>(xrit0.y, xrit0.x)[0] = 255;
 	mpc_debug_image.at<cv::Vec3b>(xrit0.y, xrit0.x)[1] = 255;
 	mpc_debug_image.at<cv::Vec3b>(xrit0.y, xrit0.x)[2] = 255;
-
+	cv::Point2i xri00;
+	/*
+	//std::cout<<"cx,cy:"<<cx<<","<<cy<<"\n";
+	//std::cout<<"get_goal_posf()-->"<<get_goal_posf()<<"\n";
+	
+	//trans_point_f_to_i(get_goal_posf(),xri00);
+	//std::cout<<"xri00:"<<xri00<<"\n";
+	//std::cout<<"xri00:"<<get_goal_posi()<<"\n";
+	
+	if(xri00.x<0 || xri00.x>map_wf){
+		
+	}
+	else if(xri00.y<0 || xri00.y>map_hf){
+	
+	}
+	else{
+		mpc_debug_image.at<cv::Vec3b>(xri00.y, xri00.x)[0] = 255;
+		mpc_debug_image.at<cv::Vec3b>(xri00.y, xri00.x)[1] = 255;
+		mpc_debug_image.at<cv::Vec3b>(xri00.y, xri00.x)[2] = 0;
+	}
+	*/
+	std::cout<<"draw static obstacle\n";
+	xri00=get_goal_posi();
+	mpc_debug_image.at<cv::Vec3b>(xri00.y, xri00.x)[0] = 255;
+	mpc_debug_image.at<cv::Vec3b>(xri00.y, xri00.x)[1] = 255;
+	mpc_debug_image.at<cv::Vec3b>(xri00.y, xri00.x)[2] = 0;
 	draw_mv_obst();
+	std::cout<<"draw dynamic obstacle\n";
 
 	//ROS_INFO("publish_debug_image\n");
 	publish_debug_image(mpc_debug_image);
@@ -45,7 +62,7 @@ void VFH_MPC::set_pub_mpc_debug_images(const cv::Point2i& xrit0)
 }
 void VFH_MPC::draw_mv_obst(void) {
 	//std::cout<<"void VFH_MPC::draw_mv_obst(void){\n";
-	//std::cout<<"mv_obsts.size():"<<mv_obsts.size()<<"\n";
+	std::cout<<"mv_obsts.size():"<<mv_obsts.size()<<"\n";
 	for (int n = 0; n < mv_obsts.size(); n++) {
 		cv::Point2i pti;
 		//std::cout<<"mv_obsts[n].data.size():"<<mv_obsts[n].data.size()<<"\n";

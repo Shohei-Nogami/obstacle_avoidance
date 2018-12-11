@@ -78,7 +78,7 @@ void detect_objects::conv_depth_image(void){
 	//ground estimate
 	float floor_th=0.3;
 	float camera_height=0.4125;
-	float camera_bias=0.2;
+	float camera_bias=0.3;//0.2;
 	const float y_th=0.40;
 	const float cam_y=0.4125;
 	float a,b,c,d;

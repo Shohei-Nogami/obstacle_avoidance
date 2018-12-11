@@ -47,3 +47,6 @@ void VFH_MPC::set_static_obstacle_data(const cv::Point2f& data) {
 int VFH_MPC::get_obst_num(void) {
 	return(int)((int)obst_pti.size() + mv_data_size);
 }
+cv::Mat& VFH_MPC::get_grid_map(void){
+	return grid_map;
+}

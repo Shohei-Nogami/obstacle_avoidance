@@ -9,8 +9,8 @@ culculate_optical_flow::culculate_optical_flow()
 //  ,clp_point_size((int)(clp_max_points*10)),threshold_fp((int)(max_points*0.8))
 //  ,th_clpimg((int)(clp_max_points*0.8))
   {
-  pub_vel=nh.advertise<obst_avoid::vel3d>("objects_velocity",1);
-  pub_match = nh_match.advertise<obst_avoid::matching>("cluster_matching_index", 1); 
+  pub_vel=nh.advertise<obstacle_detection::vel3d>("objects_velocity",1);
+  pub_match = nh_match.advertise<obstacle_detection::matching>("cluster_matching_index", 1); 
   pub1=it_pub1.advertise("depth_by_optflw_node",1);//test string
   
 	nh_sub.setCallbackQueue(&queue_empty);
@@ -173,8 +173,8 @@ void culculate_optical_flow::culculating_observed_opticalflow(void){
 void culculate_optical_flow::culculating_moving_objects_opticalflow(const cv::Mat& cur_depth_image,const double& w_v,const double& dyaw,const double& dt){//+V,Ω
   float pcur_z,ppre_z;
   cv::Point2i ppt;
-  ::obst_avoid::point3d vX_element;
-  ::obst_avoid::img_point pt;
+  ::obstacle_detection::point3d vX_element;
+  ::obstacle_detection::img_point pt;
     float X,Y;
 //  std::cout<<"w_v,dyaw,dt):("<<w_v<<","<<dyaw<<","<<dt<<")\n";
  
@@ -355,8 +355,8 @@ void culculate_optical_flow::cul_clip_vel(const double& dt) {
   const float th_mv=0.1;
   const float th_dsp=0.1;
 
-  ::obst_avoid::point3d vX_element;
-  ::obst_avoid::img_point pt;
+  ::obstacle_detection::point3d vX_element;
+  ::obstacle_detection::img_point pt;
 
 	for (int j = 0; j<cnw; j++)
 	{
@@ -399,8 +399,8 @@ void culculate_optical_flow::cul_clip_vel(const double& dt) {
 void culculate_optical_flow::publish_matching_msg(const cv::Mat& cur_depth_image)
 {
 
-	::obst_avoid::points pre_temp;
-	::obst_avoid::points cur_temp;
+	::obstacle_detection::points pre_temp;
+	::obstacle_detection::points cur_temp;
 	  float pcur_z;
 /*	
 	match_msg.pre.reserve(pts.size());

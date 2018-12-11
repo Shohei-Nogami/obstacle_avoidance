@@ -32,7 +32,7 @@ void wheel_odometry_class::subscribe_odometry(void){
 //new_beego
 void wheel_odometry_class::subscribe_odometry_kai(void){
 	std::cout<<"subscribe odometry\n";
-	queue2.callOne(ros::WallDuration(0.1));
+	queue2.callOne(ros::WallDuration(0.01));
 }
 
 
@@ -78,11 +78,11 @@ void wheel_odometry_class::set_delta_orientetion(double& dt){
 	dyaw=w*dt;
 }
 void wheel_odometry_class::define_variable(void){	
-	pub=nh_pub.advertise<odometry_publish::wheel_msg>("wheel_odometry",1);
+	pub=nh_pub.advertise<wheel_control::wheel_msg>("wheel_odometry",1);
 	nh_sub.setCallbackQueue(&queue);
 	sub=nh_sub.subscribe("/wheel_data",1,&wheel_odometry_class::wheel_odometry_callback,this);
 }
-void wheel_odometry_class::wheel_odometry_callback(const odometry_publish::wheel_msg::ConstPtr& msg){
+void wheel_odometry_class::wheel_odometry_callback(const wheel_control::wheel_msg::ConstPtr& msg){
 	//tm_wlodm.set_time();
 	vr_i=msg->vel_r;
 	vl_i=msg->vel_l;
@@ -92,7 +92,7 @@ void wheel_odometry_class::wheel_odometry_callback(const odometry_publish::wheel
 }
 
 //new_beego
-void wheel_odometry_class::new_wheel_odometry_callback(const odometry_publish::vel::ConstPtr& msg){
+void wheel_odometry_class::new_wheel_odometry_callback(const beego_control::vel::ConstPtr& msg){
 	vel_r=msg->r;
 	vel_l=msg->l;
 	std::cout<<"right"<<vel_r<<"\n";

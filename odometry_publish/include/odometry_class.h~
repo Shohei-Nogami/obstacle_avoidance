@@ -1,6 +1,7 @@
 #include"visual_odometry_class.h"
 #include"wheel_odometry_class.h"
 
+#include"beego_control/vel.h"
 
 class odometry_class{
 	private:
@@ -31,7 +32,7 @@ class odometry_class{
 		~odometry_class();
 		
 		void subscribe_msgs(void);
-		void subscribe_msgs_kai(void);//new_beego
+		
 		void set_data(void);
 		void set_velocity(void);
 		void set_odometry(void);

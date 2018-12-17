@@ -72,6 +72,7 @@ class vfh{
 		bool trans_point(const cv::Point2f& pt,cv::Point2i& pti,cv::Point2f& ptf);
 		void trans_point_f_to_i(const cv::Point2f& ptf,cv::Point2i& pti);
         void trans_point_grid_to_polor(const int xg,const int yg,float& d,float& th);
+		void trans_point_grid_to_polor(const int xg,const int yg,const cv::Point2f xrft,float& d,float& th);
 		//grid_map.cpp
 		bool check_gridmap_format(cv::Mat& map);
 		void clear_grid_map(void);
@@ -82,6 +83,7 @@ class vfh{
         virtual float select_angle(void);
         //controller
 		virtual void set_command_vel(float angle,float& v,float& w);
+		virtual void set_command_vel(float& th_tt,float angle,float& v,float& w);
 		//debug
         virtual void draw_path_mat(void);
 		void set_pub_debug_images(void);

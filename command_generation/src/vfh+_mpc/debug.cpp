@@ -7,7 +7,6 @@ void VFH_MPC::set_pub_mpc_debug_images(const cv::Point2i& xrit0)
 	int H=map_hi;
 	mpc_debug_image = cv::Mat::zeros(cv::Size(map_hi,map_wi), CV_8UC3);
 	
-	//mpc_debug_image = cv::Mat::zeros(cv::Size(map_hi,map_wi), CV_8UC3);
 	for(int h0=0;h0<H;h0++){
 		uint8_t *pd = grid_map.ptr<uint8_t>(h0);
 		cv::Vec3b *p3d = mpc_debug_image.ptr<cv::Vec3b>(h0);
@@ -27,36 +26,13 @@ void VFH_MPC::set_pub_mpc_debug_images(const cv::Point2i& xrit0)
 	mpc_debug_image.at<cv::Vec3b>(xrit0.y, xrit0.x)[0] = 255;
 	mpc_debug_image.at<cv::Vec3b>(xrit0.y, xrit0.x)[1] = 255;
 	mpc_debug_image.at<cv::Vec3b>(xrit0.y, xrit0.x)[2] = 255;
-	cv::Point2i xri00;
-	/*
-	//std::cout<<"cx,cy:"<<cx<<","<<cy<<"\n";
-	//std::cout<<"get_goal_posf()-->"<<get_goal_posf()<<"\n";
-	
-	//trans_point_f_to_i(get_goal_posf(),xri00);
-	//std::cout<<"xri00:"<<xri00<<"\n";
-	//std::cout<<"xri00:"<<get_goal_posi()<<"\n";
-	
-	if(xri00.x<0 || xri00.x>map_wf){
-		
-	}
-	else if(xri00.y<0 || xri00.y>map_hf){
-	
-	}
-	else{
-		mpc_debug_image.at<cv::Vec3b>(xri00.y, xri00.x)[0] = 255;
-		mpc_debug_image.at<cv::Vec3b>(xri00.y, xri00.x)[1] = 255;
-		mpc_debug_image.at<cv::Vec3b>(xri00.y, xri00.x)[2] = 0;
-	}
-	*/
 	std::cout<<"draw static obstacle\n";
-	xri00=get_goal_posi();
-	mpc_debug_image.at<cv::Vec3b>(xri00.y, xri00.x)[0] = 255;
-	mpc_debug_image.at<cv::Vec3b>(xri00.y, xri00.x)[1] = 255;
-	mpc_debug_image.at<cv::Vec3b>(xri00.y, xri00.x)[2] = 0;
+	mpc_debug_image.at<cv::Vec3b>(xgi.y,xgi.x)[0] =0;
+	mpc_debug_image.at<cv::Vec3b>(xgi.y,xgi.x)[1] =0;
+	mpc_debug_image.at<cv::Vec3b>(xgi.y,xgi.x)[2] =255;
 	draw_mv_obst();
 	std::cout<<"draw dynamic obstacle\n";
 
-	//ROS_INFO("publish_debug_image\n");
 	publish_debug_image(mpc_debug_image);
 	//ROS_INFO("published_debug_image\n");	
 }
@@ -121,100 +97,101 @@ void VFH_MPC::past_time(const float& time) {
 	//std::cout<<"void VFH_MPC::past_time(const float& time){\n";
 	clear_move_data();
 	for (int n = 0; n < mv_obsts.size(); n++) {
-		/*
-		float mvx=mv_obsts[n].vx*time;
-		float mvy=mv_obsts[n].vy*time;
-
-		for(int k=0;k<mv_obsts[n].data.size();k++)
-		{
-			mv_obsts[n].data[k].x+=mvx;
-			mv_obsts[n].data[k].y+=mvy;
-		}
-		*/
 		mv_obsts[n].mvxt += mv_obsts[n].vx*time;
 		mv_obsts[n].mvyt += mv_obsts[n].vy*time;
 
 	}
 	//std::cout<<"void VFH_MPC::past_time(const float& time){\n";
 }
-/*
-bool VFH_MPC::set_grad0(const cv::Point2i& xti) {
+void VFH_MPC::draw_mpc_path_mat(void)
+{
+	ros::NodeHandle n;
+	ros::Rate rate(100);
+	int obst_num=(int)obst_pti.size()+mv_data_size;
+	clear_move_data();
+	float v0=vrt;
+	float goal_time=0;
+	// std::ofstream ofss("./vel_angVel.csv",std::ios::app);
+	// ofss<<"time"<<","<<"x"<<","<<"y"<<","<<"v"<<","<<"w"<<","<<"th_t"<<","<<std::endl;
 
-	//map size
-	int W = map_wi;
-	int H = map_hi;
-	int delta = 1;
-	float delta_cell = delta * reso;
+	// ros::NodeHandle nh1,nh2;
+	// ros::Publisher pub1,pub2;
+	// command_generation::robot_odm robot_odm;
+	// nav_msgs::Odometry obst_odm;
+	// pub1=nh1.advertise<command_generation::robot_odm>("robot_odm",1);
+	// pub2=nh2.advertise<nav_msgs::Odometry>("obstacle_odm",1);
 
-	cv::Point2i yti_0 = xti;
-	cv::Point2i yti_1 = xti;
-	//pot_xt0=pot_mapt.at<float>(xti.y,xti.x);
-	std::cout << "xti:" << xti << "\n";
-	if (xti.y == 0)
-	{
-		yti_1.y += delta;
-		pot_y1 = pot_mapt.at<float>(xti.y + delta, xti.x);
-		pot_y0 = pot_mapt.at<float>(xti.y, xti.x);
-		grad_yt = -get_grad_1(pot_y1, pot_y0, delta_cell);
-	}
-	else if (xti.y == H - delta)
-	{
-		yti_0.y -= delta;
-		pot_y1 = pot_mapt.at<float>(xti.y, xti.x);
-		pot_y0 = pot_mapt.at<float>(xti.y - delta, xti.x);
-		grad_yt = -get_grad_1(pot_y1, pot_y0, delta_cell);
-	}
-	else {
-		yti_1.y += delta;
-		yti_0.y -= delta;
-		pot_y1 = pot_mapt.at<float>(xti.y + delta, xti.x);
-		pot_y0 = pot_mapt.at<float>(xti.y - delta, xti.x);
-		grad_yt = -get_grad_2(pot_y1, pot_y0, delta_cell);
-	}
-	std::cout << "pot(x0,x1),(y0,y1):(" << pot_x0 << "," << pot_x1 << "),(" << pot_y0 << "," << pot_y1 << ")\n";
-	std::cout << "grad_xt,yt:" << grad_xt << "," << grad_yt << "\n";
+	// obst_odm.pose.pose.position.x=3.5;
+	// obst_odm.pose.pose.position.y=0;
+	// obst_odm.pose.pose.position.z=0;
+	cv::Mat grid_map_t;
 
-
-	cv::Point2i xti_0 = xti;
-	cv::Point2i xti_1 = xti;
-	if (xti.x == 0)
-	{
-		xti_1.x += delta;
-		pot_x1 = pot_mapt.at<float>(xti.y, xti.x + delta);
-		pot_x0 = pot_mapt.at<float>(xti.y, xti.x);
-		grad_xt = get_grad_1(pot_x1, pot_x0, delta_cell);
+	ROS_INFO("clear_move_data");
+	clear_move_data();
+	while(ros::ok()){
+		// //debug
+		// robot_odm.x=xrf.x;
+		// robot_odm.y=xrf.y;
+		// obst_odm.pose.pose.position.x+=mv_t*0.2;
+		// pub1.publish(robot_odm);
+		// pub2.publish(obst_odm);
+		grid_map_t = grid_map.clone();
+		//float to int
+		trans_point_f_to_i(xrf,xri);
+		std::cout<<"xrf,xgf:"<<xrf<<"-->"<<xgf<<"\n";
+		//ゴールセルに到達したら終了
+		if(xri.x==xgi.x && xri.y==xgi.y)
+		{
+			std::cout<<"Goal\n";
+			break;
+		}
+		//MPC
+		ROS_INFO("get_speed");
+		v0 = get_speed(xrf,vrt);
+		std::cout<<"v0:"<<v0<<"\n";
+		ROS_INFO("clear_move_data");
+		clear_move_data();
+		add_mv_grid(grid_map_t); 
+		ROS_INFO("check_collision");
+		if(check_collision(xrf))//collision
+		{
+			ROS_INFO("collision...\n");
+			break;
+		}
+		
+		//ロボットの命令速度算出
+		float w, v,angle;
+		float cost=0;
+		ROS_INFO("set_command_vel...\n");
+		set_polar_histogram(grid_map_t,xrf,th_t);
+		angle = select_angle(xrf,cost,th_t);
+		set_command_vel(th_t,angle, v, w);
+		std::cout<<"v0,vrt,w,th_t:"<<v0<<","<<vrt<<","<<w<<","<<th_t<<"\n";
+		
+		// ofss<<goal_time<<","<<xrf.x+cx<<","<<xrf.y+cy<<","<<v<<","<<w<<","<<th_t<<","<<std::endl;
+		
+		//ロボットの移動
+		//mv_t:移動時間
+		float l=v*mv_t;
+		th_t=th_t+w*mv_t;
+		xrf.x=xrf.x + l*cos(th_t);
+		xrf.y=xrf.y + l*sin(th_t);
+		//速度変化
+		//ロボットの速度は1時遅れ系で変化すると仮定
+		//目標値v0,現在速度vrt
+		float Tr=0.25/1000;//マブチ3Vモータを参考
+		//vrt=vrt+(v0-vrt)*(1-exp(-Tr*dt));
+		vrt=vrt+(v0-vrt)*(exp(-Tr*mv_t));
+		std::cout<<"(1-exp(-Tr*dt)):"<<(1-exp(-Tr*mv_t))<<"\n";
+		//debug
+		//ROS_INFO("set_pub_mpc_debug_images...\n");
+		past_time(mv_t);
+		set_pub_mpc_debug_images(xri);
+		//move obstacles
+		rate.sleep();
+		goal_time+=mv_t;	
 	}
-	else if (xti.x == W - delta)
-	{
-		xti_0.x -= delta;
-		pot_x1 = pot_mapt.at<float>(xti.y, xti.x);
-		pot_x0 = pot_mapt.at<float>(xti.y, xti.x - delta);
-		grad_xt = get_grad_1(pot_x1, pot_x0, delta_cell);
-	}
-	else
-	{
-		xti_1.x += delta;
-		xti_0.x -= delta;
-		pot_x1 = pot_mapt.at<float>(xti.y, xti.x + delta);
-		pot_x0 = pot_mapt.at<float>(xti.y, xti.x - delta);
-		grad_xt = get_grad_2(pot_x1, pot_x0, delta_cell);
-	}
-	if (std::isinf(grad_xt)) {
-		if (grad_xt > 0)
-			grad_xt = FLT_MAX;
-		else
-			grad_xt = -FLT_MAX;
-	}
-	if (std::isinf(grad_yt)) {
-		if (grad_yt > 0)
-			grad_yt = FLT_MAX;
-		else
-			grad_yt = -FLT_MAX;
-	}
-	if (pot_x0 > max_pot || pot_x1 > max_pot || pot_y0 > max_pot || pot_y1 > max_pot)
-	{
-		return true;
-	}
-	return false;
+	//test
+	// std::ofstream ofs("./goal_time.csv",std::ios::app);
+	// ofs<<goal_time<<std::endl;
 }
-*/

@@ -3,87 +3,7 @@
 float& VFH_MPC::get_pot_xt(const cv::Point2i& xti) {
 	return pot_mapt.at<float>(xti.y, xti.x);
 }
-/*
-bool VFH_MPC::set_grad(const cv::Point2i& xti) {
-
-	//map size
-	int W = map_wi;
-	int H = map_hi;
-	int delta = 1;
-	float delta_cell = delta * reso;
-
-	cv::Point2i yti_0 = xti;
-	cv::Point2i yti_1 = xti;
-	//pot_xt0=pot_mapt.at<float>(xti.y,xti.x);
-
-	if (xti.y == 0)
-	{
-		yti_1.y += delta;
-		pot_y1 = pot_mapt.at<float>(xti.y + delta, xti.x);
-		pot_y0 = pot_mapt.at<float>(xti.y, xti.x);
-		grad_yt = -get_grad_1(pot_y1, pot_y0, delta_cell);
-	}
-	else if (xti.y == H - delta)
-	{
-		yti_0.y -= delta;
-		pot_y1 = pot_mapt.at<float>(xti.y, xti.x);
-		pot_y0 = pot_mapt.at<float>(xti.y - delta, xti.x);
-		grad_yt = -get_grad_1(pot_y1, pot_y0, delta_cell);
-	}
-	else {
-		yti_1.y += delta;
-		yti_0.y -= delta;
-		pot_y1 = pot_mapt.at<float>(xti.y + delta, xti.x);
-		pot_y0 = pot_mapt.at<float>(xti.y - delta, xti.x);
-		grad_yt = -get_grad_2(pot_y1, pot_y0, delta_cell);
-	}
-
-
-	cv::Point2i xti_0 = xti;
-	cv::Point2i xti_1 = xti;
-	if (xti.x == 0)
-	{
-		xti_1.x += delta;
-		pot_x1 = pot_mapt.at<float>(xti.y, xti.x + delta);
-		pot_x0 = pot_mapt.at<float>(xti.y, xti.x);
-		grad_xt = get_grad_1(pot_x1, pot_x0, delta_cell);
-	}
-	else if (xti.x == W - delta)
-	{
-		xti_0.x -= delta;
-		pot_x1 = pot_mapt.at<float>(xti.y, xti.x);
-		pot_x0 = pot_mapt.at<float>(xti.y, xti.x - delta);
-		grad_xt = get_grad_1(pot_x1, pot_x0, delta_cell);
-	}
-	else
-	{
-		xti_1.x += delta;
-		xti_0.x -= delta;
-		pot_x1 = pot_mapt.at<float>(xti.y, xti.x + delta);
-		pot_x0 = pot_mapt.at<float>(xti.y, xti.x - delta);
-		grad_xt = get_grad_2(pot_x1, pot_x0, delta_cell);
-	}
-	if (std::isinf(grad_xt)) {
-		if (grad_xt > 0)
-			grad_xt = FLT_MAX;
-		else
-			grad_xt = -FLT_MAX;
-	}
-	if (std::isinf(grad_yt)) {
-		if (grad_yt > 0)
-			grad_yt = FLT_MAX;
-		else
-			grad_yt = -FLT_MAX;
-	}
-	double th_pot = max_pot * ((int)obst_pti.size() + mv_data_size);
-	if (pot_x0 > th_pot || pot_x1 > th_pot || pot_y0 > th_pot || pot_y1 > th_pot)
-	{
-		return true;
-	}
-	return false;
-}
-*/
-void VFH_MPC::set_polar_histogram(cv::Mat& grid_map_temp){
+void VFH_MPC::set_polar_histogram(cv::Mat& grid_map_temp,cv::Point2f& xrft,float& th_tt){
 	int W=map_wi;
 	int H=map_hi;
 	float max_polar=std::sqrt(map_hf*map_hf+map_wf*map_wf);
@@ -91,34 +11,24 @@ void VFH_MPC::set_polar_histogram(cv::Mat& grid_map_temp){
 	for(int i=0;i<ph.size();i++){
 		ph[i]=max_polar;
 	}
-	//std::cout<<"ph.size():"<<ph.size()<<"\n";
-	// std::cout<<"min,th,max:"<<th_t*180/M_PI-(max_range-min_range)/2
-	// 	<<","<<th_t*180/M_PI<<","<<th_t*180/M_PI+(max_range-min_range)/2<<"\n";
 	//conv grid to polor
 	for(int h=0;h<H;h++){
 		uint8_t *pg = grid_map_temp.ptr<uint8_t>(h);
 		for(int w=0;w<W;w++){
 			if(pg[w]>0){
 				float d,th;
-				trans_point_grid_to_polor(w,h,d,th);
-				//std::cout<<"w,h,d,th:"<<w<<","<<h<<","<<d<<","<<th<<"\n";
-				//th=(th+th_t)*180/M_PI;
-				//th=(th-th_t)*180/M_PI;
+				trans_point_grid_to_polor(w,h,xrft,d,th);
 				th=th*180/M_PI;
-				//std::cout<<"th_t:"<<th_t*180/M_PI<<"\n";
-				//std::cout<<th_t*180/M_PI-(max_range-min_range)/2<<"<"<<th<<"<"<<th_t*180/M_PI+(max_range-min_range)/2<<"\n";
-				if(th<th_t*180/M_PI-(max_range-min_range)/2
-					||th>th_t*180/M_PI+(max_range-min_range)/2){
+				if(th<th_tt*180/M_PI-(max_range-min_range)/2
+					||th>th_tt*180/M_PI+(max_range-min_range)/2){
 					continue;
 				}
 				//conv th(float) to thi(int)
-				int thi=(int)(th-(th_t*180/M_PI-(max_range-min_range)/2) );
-				//std::cout<<"th,thi,d:"<<th<<","<<thi<<","<<d<<"\n";
-				//float dth=std::atan2(d,cr+rr)*180/M_PI;
+				int thi=(int)(th-(th_tt*180/M_PI-(max_range-min_range)/2) );
 				float margin_r=0.2;
 				float dth=std::atan2(cr+rr+margin_r,d)*180/M_PI;
 				int dthi=(int)dth+1;
-				//std::cout<<"dth:"<<dth<<"\n";
+				
 				for(int k=0;k<dthi*2;k++){
 					int block_th=thi+k-dth;
 					if(block_th<0||block_th>=(int)ph.size()){
@@ -133,7 +43,7 @@ void VFH_MPC::set_polar_histogram(cv::Mat& grid_map_temp){
 	}
 }
 
-float VFH_MPC::select_angle(float& cost,float& th_t0) {
+float VFH_MPC::select_angle(const cv::Point2f& xrft,float& cost,float& th_t0) {
 	float MAX_EV=10000;
 	int select_angle = min_range + (max_range - min_range) / 2;//center angle
 	float min_ev = MAX_EV;//evaluation value
@@ -147,7 +57,7 @@ float VFH_MPC::select_angle(float& cost,float& th_t0) {
 		if (block_d > ph[i]) {
 			continue;
 		}
-		float th_p = std::atan2((xgf.y - xrf.y), (xgf.x - xrf.x)) * 180 / M_PI;
+		float th_p = std::atan2((xgf.y - xrft.y), (xgf.x - xrft.x)) * 180 / M_PI;
 		float th_s = th_t0 * 180 / M_PI + i * reso_range - (max_range - min_range) / 2;
 		float dif_th = th_p - th_s;
 		if (std::abs(dif_th) > 180) {
@@ -158,9 +68,9 @@ float VFH_MPC::select_angle(float& cost,float& th_t0) {
 				dif_th -= 360;
 			}
 		}
-		float ev = +w1 * std::abs(dif_th)//�_����1��
-			+ w2 * std::abs(i*reso_range - (max_range - min_range) / 2)//�_����2��
-			- w3 * ph[i]//�ǉ������]����
+		float ev=+w1*std::abs(dif_th)//論文第1項
+			+w2*std::abs(i*reso_range-(max_range-min_range)/2)//論文第2項
+			-w3*ph[i]//追加した評価式
 			;
 
 		if (min_ev > ev) {
@@ -169,43 +79,43 @@ float VFH_MPC::select_angle(float& cost,float& th_t0) {
 		}
 	}
 	cost = min_ev;
-	return (float)(select_angle*reso_range - (max_range - min_range) / reso_range / 2)*M_PI / 180 + th_t;
+	return (float)(select_angle*reso_range - (max_range - min_range) / reso_range / 2)*M_PI / 180 + th_t0;
 }
 
 
 //retunr sum cost
 double VFH_MPC::culc_cost(cv::Point2f& xrft0, const float v0, const float& time_range)
 {
+	//debug 用
 	ros::NodeHandle n;
 	ros::Rate rate(1000);
-	double sum_cost = 0;
-	float tr = time_range;
-	cv::Point2f xrft = xrft0;
-	cv::Point2i xrit = xri;
-	float th_t0 = th_t;
+	//set data
+	double sum_cost=0;
+	float tr=time_range;
+	cv::Point2f xrft=xrft0;
+	cv::Point2i xrit;
+	float th_t0=th_t;
 	//init mv data
 	clear_move_data();
-	int obst_num = (int)obst_pti.size() + mv_data_size;
-	ROS_INFO("culc_cost...while\n");
-	//std::cout<<"xrft0,xrft:"<<xrft0<<","<<xrft<<"\n";
-	//std::cout<<"xrit,xri:"<<xrft0<<","<<xrft<<"\n";
-	float vrate = 2;
+	//障害物データの数
+	int obst_num=(int)obst_pti.size()+mv_data_size;
+	//ゴール時の重み
+	float vrate=2;
+	//更新用グリッドマップ
 	cv::Mat grid_map_t;
+
 	while (ros::ok() && tr > 0)
 	{
 		//float to int
 		trans_point_f_to_i(xrft, xrit);
 		//std::cout<<"xrft,xgf:"<<xrft<<"-->"<<xgf<<"\n";
-		//set pot map(t)
-//		pot_mapt = pot_map.clone();
-//		grid_mapt = grid_map.clone();
+		//set grid map(t)
 		grid_map_t = grid_map.clone();
 		
 		ROS_INFO("add_mv_pot...while\n");
-		//add_mv_pot(xrit, obst_num);
 		//add_mv_grid();
 		add_mv_grid(grid_map_t);		
-		//�S�[���Z���ɓ��B������I��
+		//ゴールセルに到達したら終了
 		if (xrit.x == xgi.x && xrit.y == xgi.y)
 		{
 			std::cout << "Goal\n";
@@ -217,23 +127,21 @@ double VFH_MPC::culc_cost(cv::Point2f& xrft0, const float v0, const float& time_
 			}
 			return -DBL_MAX * (tr / time_range);
 		}
-		
-		//���{�b�g�̖��ߑ��x�Z�o
-		float w, v;
+		if(check_collision(xrft)){//collision
+			ROS_INFO("mpc collision");
+			return DBL_MAX-(time_range-tr);
+		}
+		// ROS_INFO("set_grad...while\n");
+		float w, v,angle;
 		float cost = 0;
 		//set_polar_histogram();
-		set_polar_histogram(grid_map_t);
-		
-		set_command_vel(select_angle(cost,th_t0), v, w);
+		set_polar_histogram(grid_map_t,xrft,th_t0);
+		angle = select_angle(xrft,cost,th_t0);
+		set_command_vel(th_t0,angle, v, w);
 		std::cout<<"set_command_vel(select_angle(cost,th_t0), v, w);\n";
 		//add cost
 		sum_cost += cost;
-//		float w, v;
-//		set_command_vel(xrit, v0, v, w, th_t0);
 
-		//std::cout<<"v,w,th_t0:"<<v<<","<<w<<","<<th_t0<<"\n";
-		//���{�b�g�̈ړ�
-		//mv_t:�ړ�����
 		std::cout<<"float l = v * mv_t;\n";
 		float l = v * mv_t;
 		th_t0 = th_t0 + w * mv_t;
@@ -247,33 +155,9 @@ double VFH_MPC::culc_cost(cv::Point2f& xrft0, const float v0, const float& time_
 		set_pub_mpc_debug_images(xrit);	
 		//rate.sleep();
 
-		/*
-		if(tr==time_range){
-
-			std::cout<<"in cost:grad(x,y,w):"<<grad_xt<<","<<grad_yt<<","<<w<<"\n";
-			std::cout<<"xrit:"<<xrit<<"\n";
-			std::cout<<"pot_xrit:"<<get_pot_xt(xrit)<<"\n";
-			std::cout<<"pot(x0,x1),(y0,y1):("<<pot_x0<<","<<pot_x1<<"),("<<pot_y0<<","<<pot_y1<<")\n";
-			pot_maptt=pot_mapt.clone();
-
-			std::cout<<"w in mpc:"<<w<<"\n";
-
-		}
-		*/
-
 		tr -= mv_t;
 		ROS_INFO("end...while\n");
 	}
-	/*
-	cv::Point2f del=xrft-xrft0;
-	vrate=std::abs(del.x)+std::abs(del.y);
-	if(sum_cost>0){
-		sum_cost/=vrate;
-	}
-	else{
-		sum_cost*=vrate;
-	}
-	*/
 	return sum_cost;
 }
 
@@ -281,11 +165,10 @@ float VFH_MPC::get_speed(const cv::Point2f& xrft0, const float& vrt00)
 {
 	cv::Point2f xrft = xrft0;
 	cv::Point2i xrit;
-	//float vrt0=vrt00;//
 	float vrt0 = vrt;//
 	float delta_v = 0.05;
 	float vrt1 = vrt + delta_v;
-	//
+	
 	// std::cout<<"vrt:"<<vrt<<"\n";
 	float max_v = 0.3;
 	float min_v = 0.1;
@@ -297,19 +180,11 @@ float VFH_MPC::get_speed(const cv::Point2f& xrft0, const float& vrt00)
 	float opt_v = vrt;
 	//
 	//std::cout<<"vrt0:"<<vrt0<<"\n";
-	if (vrt1 >= max_v) {
-		vrt0 = vrt0 - delta_v;
+	if (vrt1 > max_v) {
 		vrt1 = vrt0;//+delta_v;
+		vrt0 = vrt0 - delta_v;
 	}
 	//Process Once
-	/*
-	trans_point_f_to_i(xrft,xrit);
-	if(xrit.x==xgi.x && xrit.y==xgi.y)
-	{
-		std::cout<<"Goal\n";
-		return 0;
-	}
-	*/
 	//std::cout<<"xrft0,xrft:"<<xrft0<<","<<xrft<<"\n";
 	ROS_INFO("culc_cost0...\n");
 	cost0 = culc_cost(xrft, vrt0, time_range);
@@ -327,15 +202,7 @@ float VFH_MPC::get_speed(const cv::Point2f& xrft0, const float& vrt00)
 	ROS_INFO("while...\n");
 	while (search_num-- > 0 && ros::ok()) {
 		grad_v = (cost1 - cost0) / delta_v;
-		//
-		/*
-		pot_rate=std::abs((cost1-cost0)/cost0);
-		std::cout<<"pot_rate:"<<pot_rate<<"\n";
-		if(pot_rate<pot_th)
-		{
-			break;
-		}
-		*/
+		
 		//�ۗ�
 		//if(grad_v>0){//cost0<cost1
 		//std::cout<<"vrt("<<vrt0<<","<<vrt1<<")\n";

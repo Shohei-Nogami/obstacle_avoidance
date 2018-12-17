@@ -6,25 +6,18 @@ void APF_MPC::set_pub_mpc_debug_images(const cv::Point2i& xrit0)
 	int W=map_wi;
 	int H=map_hi;
 	mpc_debug_image = cv::Mat::zeros(cv::Size(map_hi,map_wi), CV_8UC3);
-	//mpc_debug_image = cv::Mat::zeros(cv::Size(map_hi,map_wi), CV_8UC3);
 	for(int h0=0;h0<H;h0++){
 		float *pd = pot_map.ptr<float>(h0);
 		cv::Vec3b *p3d = mpc_debug_image.ptr<cv::Vec3b>(h0);
 		for(int w0=0;w0<W;w0++){
 			//set potential
-			//float pot=pot_mapt.at<float>(h0,w0);//*std::abs(sum_pot);
-			// float pot=pot_map.at<float>(h0,w0);//*std::abs(sum_pot);
 			float pot=pd[w0];
-			//std::cout<<"pot:"<<pot<<"\n";
 			if(pot>0)
 			{
-				// mpc_debug_image.at<cv::Vec3b>(h0,w0)[2] =pot*255;
 				p3d[w0][2]=pot*255;
 			}
 			else
 			{
-				// mpc_debug_image.at<cv::Vec3b>(h0,w0)[0] =(-pot)*255;
-				// mpc_debug_image.at<cv::Vec3b>(h0,w0)[1] =(-pot)*255;
 				p3d[w0][0]=(-pot)*255;
 				p3d[w0][1]=(-pot)*255;
 
@@ -38,29 +31,21 @@ void APF_MPC::set_pub_mpc_debug_images(const cv::Point2i& xrit0)
 	mpc_debug_image.at<cv::Vec3b>(xrit0.y,xrit0.x)[2] =255;
 	
 	draw_mv_obst();
-	
-	//ROS_INFO("publish_debug_image\n");
 	publish_debug_image(mpc_debug_image);
-	//ROS_INFO("published_debug_image\n");	
 }
 void APF_MPC::draw_mv_obst(void){
-	//std::cout<<"void APF_MPC::draw_mv_obst(void){\n";
 	std::cout<<"mv_obsts.size():"<<mv_obsts.size()<<"\n";
 	for(int n=0;n<mv_obsts.size();n++){
-		cv::Point2i pti;
-		//std::cout<<"mv_obsts[n].data.size():"<<mv_obsts[n].data.size()<<"\n";
+		cv::Point2i pti;\
 		for(int k=0;k<mv_obsts[n].data.size();k++)
 		{
 			cv::Point2f pt=mv_obsts[n].data[k];
-			//std::cout<<"pt0:"<<pt<<"\n";
 			pt.x+=mv_obsts[n].mvx;
 			pt.y+=mv_obsts[n].mvy;
 			pt.x+=mv_obsts[n].mvxt;
 			pt.y+=mv_obsts[n].mvyt;
-			//std::cout<<"pt:"<<pt<<"\n";
 			if(trans_point(pt,pti))
 			{
-				//std::cout<<"pti:"<<pti<<"\n";
 				mpc_debug_image.at<cv::Vec3b>(pti.y,pti.x)[1] =255;
 			}
 		}	
@@ -141,13 +126,6 @@ void APF_MPC::draw_mpc_path_mat(void)
 		float w,v;
 		ROS_INFO("set_command_vel...\n");
 		set_command_vel(xri,v0,v,w,th_t);
-		/*
-		std::cout<<"xri:"<<xri<<"\n";
-		std::cout<<"pot_xri:"<<get_pot_xt(xri)<<"\n";
-		std::cout<<"pot(x0,x1),(y0,y1):("<<pot_x0<<","<<pot_x1<<"),("<<pot_y0<<","<<pot_y1<<")\n";
-		
-		std::cout<<"grad(x,y):"<<grad_xt<<","<<grad_yt<<"\n";//<--gradに問題:解決
-		*/
 		std::cout<<"v0,vrt,w,th_t:"<<v0<<","<<vrt<<","<<w<<","<<th_t<<"\n";
 		
 		ofss<<goal_time<<","<<xrf.x+cx<<","<<xrf.y+cy<<","<<v<<","<<w<<","<<th_t<<","<<std::endl;
@@ -218,16 +196,6 @@ void APF_MPC::past_time(const float& time){
 	//std::cout<<"void APF_MPC::past_time(const float& time){\n";
 	clear_move_data();
 	for(int n=0;n<mv_obsts.size();n++){
-		/*
-		float mvx=mv_obsts[n].vx*time;
-		float mvy=mv_obsts[n].vy*time;
-		
-		for(int k=0;k<mv_obsts[n].data.size();k++)
-		{
-			mv_obsts[n].data[k].x+=mvx;
-			mv_obsts[n].data[k].y+=mvy;
-		}
-		*/
 		mv_obsts[n].mvxt+=mv_obsts[n].vx*time;
 		mv_obsts[n].mvyt+=mv_obsts[n].vy*time;
 		

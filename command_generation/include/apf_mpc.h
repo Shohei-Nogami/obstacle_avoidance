@@ -3,7 +3,7 @@
 
 #include<apf.h>
 #include<fstream>
-#include<command_generation/robot_odm.h>
+#include<odometry_publish/robot_odm.h>
 #include<nav_msgs/Odometry.h>
 
 class APF_MPC : public APF

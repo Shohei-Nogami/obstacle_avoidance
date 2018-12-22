@@ -22,6 +22,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## System dependencies are found with CMake's conventions
 find_package(OpenCV REQUIRED)
 
+#find_package(odometry_publish REQUIRED)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -55,16 +56,16 @@ find_package(OpenCV REQUIRED)
 ## Generate messages in the 'msg' folder
  add_message_files(
    FILES
-   point2d.msg
-   point3d.msg
-   cluster_element.msg
-   cluster_point.msg
-   cluster_with_vel.msg
-   object_info.msg
-   objects_info.msg
-   filted_objects_info.msg
-   filted_object_info.msg
-   robot_odm.msg
+#   point2d.msg
+#   point3d.msg
+#   cluster_element.msg
+#   cluster_point.msg
+#   cluster_with_vel.msg
+#   object_info.msg
+#   objects_info.msg
+#   filted_objects_info.msg
+#   filted_object_info.msg
+#   robot_odm.msg
    select_theta.msg
  )
 
@@ -120,7 +121,7 @@ find_package(OpenCV REQUIRED)
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+  #INCLUDE_DIRS include
   CATKIN_DEPENDS message_runtime
 #  CATKIN_DEPENDS other_catkin_pkg
 )
@@ -133,9 +134,9 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   include
+  ../odometry_publish/include
   ${catkin_INCLUDE_DIRS}
   ${OpenCV_INCLUDE_DIRS}
-
 )
 
 ## Declare a C++ library
@@ -229,10 +230,29 @@ include_directories(
 #add_dependencies(command_generation_apf ${PROJECT_NAME}_generate_messages_cpp)
 #target_link_libraries(command_generation_apf ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
+
+add_executable(vfh_mpc_test src/vfh+_mpc/vfh+_mpc_test.cpp
+  #vfh
+  src/vfh+_cls/vfh+.cpp 
+  #src/tm_cls/time_class.cpp 
+  src/vfh+_cls/controler.cpp src/vfh+_cls/coordinate_convert.cpp
+  src/vfh+_cls/debug.cpp src/vfh+_cls/grid_map.cpp src/vfh+_cls/select_angle.cpp
+  src/vfh+_cls/set_param.cpp
+  #vfh_mpc
+  src/vfh+_mpc/vfh+_mpc.cpp src/vfh+_mpc/set_data.cpp 
+  src/vfh+_mpc/mv_pot_map.cpp  src/vfh+_mpc/mpc_func.cpp src/vfh+_mpc/debug.cpp 
+  
+  )
+add_dependencies(vfh_mpc_test ${PROJECT_NAME}_generate_messages_cpp)
+#add_dependencies(vfh_mpc_test ${${PROJECT_NAME}_EXPORTED_TARGET}} ${catkin_EXPORTED_TARGET})
+target_link_libraries(vfh_mpc_test ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+
+
 add_executable(command_generation_mpc src/main.cpp src/command_generator.cpp
   #vfh
   src/vfh+_cls/vfh+.cpp 
-  src/tm_cls/time_class.cpp src/vfh+_cls/controler.cpp src/vfh+_cls/coordinate_convert.cpp
+  #src/tm_cls/time_class.cpp 
+  src/vfh+_cls/controler.cpp src/vfh+_cls/coordinate_convert.cpp
   src/vfh+_cls/debug.cpp src/vfh+_cls/grid_map.cpp src/vfh+_cls/select_angle.cpp
   src/vfh+_cls/set_param.cpp
   #vfh_mpc
@@ -247,16 +267,17 @@ add_executable(command_generation_mpc src/main.cpp src/command_generator.cpp
   
   )
 add_dependencies(command_generation_mpc ${PROJECT_NAME}_generate_messages_cpp)
-add_dependencies(command_generation_mpc ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(command_generation_mpc ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
 
 
 add_executable(vfh_test src/vfh+_cls/vfh+_test.cpp src/vfh+_cls/vfh+.cpp 
-  src/tm_cls/time_class.cpp src/vfh+_cls/controler.cpp src/vfh+_cls/coordinate_convert.cpp
+  #src/tm_cls/time_class.cpp 
+  src/vfh+_cls/controler.cpp src/vfh+_cls/coordinate_convert.cpp
   src/vfh+_cls/debug.cpp src/vfh+_cls/grid_map.cpp src/vfh+_cls/select_angle.cpp
   src/vfh+_cls/set_param.cpp )
 add_dependencies(vfh_test ${PROJECT_NAME}_generate_messages_cpp)
 target_link_libraries(vfh_test ${catkin_LIBRARIES} ${OpenCV_LIBRARIES})
+
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)

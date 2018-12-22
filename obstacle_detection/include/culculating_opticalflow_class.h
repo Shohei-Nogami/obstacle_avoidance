@@ -1,3 +1,6 @@
+#ifndef INCLUDE_CULC_OPT_FLOW_CLASS
+#define INCLUDE_CULC_OPT_FLOW_CLASS
+
 #include"ros/ros.h"
 //opencv
 #include<opencv2/highgui/highgui.hpp>
@@ -9,11 +12,7 @@
 #include<cv_bridge/cv_bridge.h>
 #include <ros/callback_queue.h>
 
-//#include"obst_avoid/point3d.h"
 #include"obstacle_detection/vel3d.h"
-//#include"obst_avoid/img_point.h"
-
-//#include"obst_avoid/points.h"
 #include"obstacle_detection/matching.h"
 
 class culculate_optical_flow
@@ -99,3 +98,5 @@ class culculate_optical_flow
 		void subscribe_response(void);
 		void empty_callback(const std_msgs::Empty& msg);
 };
+
+#endif

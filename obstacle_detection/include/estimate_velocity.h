@@ -1,21 +1,15 @@
+#ifndef INCLUDE_ESTIMATE_VELOCITY_CLASS
+#define INCLUDE_ESTIMATE_VELOCITY_CLASS
 #include"ros/ros.h"
 #include <ros/callback_queue.h>
 #include <sensor_msgs/PointCloud2.h>
 #include<opencv2/highgui/highgui.hpp>
 #include<opencv2/imgproc/imgproc.hpp>
-//#include"obst_avoid/point3d.h"
-//#include"obst_avoid/object_info.h"
-//#include"obst_avoid/objects_info.h"
-//#include"obst_avoid/filted_objects_info.h"
 #include"obstacle_detection/objects_info.h"
 #include"obstacle_detection/filted_objects_info.h"
-//#include"obst_avoid/filted_object_info.h"
-//#include"obst_avoid/cluster_point.h"
 
-#include"time_class.h"
+#include<time_class.h>
 #include <pcl_ros/point_cloud.h>
-//#include<Eigen/Core>
-//#include<Eigen/Dense>
 #include<fstream>//file input output
 
 class estimate_velocity{
@@ -87,3 +81,5 @@ class estimate_velocity{
 		void publish_pointcloud_ex(void);
 		void publish_filted_objects_info(void);
 };
+
+#endif

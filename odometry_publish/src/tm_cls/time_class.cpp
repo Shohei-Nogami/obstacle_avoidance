@@ -1,4 +1,4 @@
-#include"time_class.h"
+#include<time_class.h>
 
 time_class::time_class()
 	:first_process_flag(true),delta_time_d(0)

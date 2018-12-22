@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="command_generation" name="vfh_mpc_test"
+   type="vfh_mpc_test" output="screen" respawn="false" >
+    <param name="simu_num" default="0" value="0"/>
+  </node>
+</launch>

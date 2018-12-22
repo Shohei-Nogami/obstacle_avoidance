@@ -6,19 +6,20 @@
 #include <sensor_msgs/PointCloud2.h>
 #include<opencv2/highgui/highgui.hpp>
 #include<opencv2/imgproc/imgproc.hpp>
-#include<command_generation/point3d.h>
-#include<command_generation/object_info.h>
-#include<command_generation/objects_info.h>
-#include<command_generation/filted_objects_info.h>
-#include<command_generation/filted_object_info.h>
-#include"time_class.h"
+#include<obstacle_detection/point3d.h>
+#include<obstacle_detection/object_info.h>
+#include<obstacle_detection/objects_info.h>
+#include<obstacle_detection/filted_objects_info.h>
+#include<obstacle_detection/filted_object_info.h>
+// #include"time_class.h"
+// #include<time_class.h>
 #include <pcl_ros/point_cloud.h>
 #include<fstream>//file input output
 #include<apf_mpc.h>
 #include<vfh+_mpc.h>
-#include<command_generation/point2d.h>
+#include<odometry_publish/point2d.h>
 #include<command_generation/select_theta.h>
-#include<command_generation/robot_odm.h>
+#include<odometry_publish/robot_odm.h>
 #include<geometry_msgs/Twist.h>
 #include<std_msgs/Empty.h>
 #include<omp.h>
@@ -34,9 +35,9 @@ class command_generator {
         ros::CallbackQueue queue,queue2;
 
         //ros msgs
-        command_generation::filted_objects_info obj_info;
-        command_generation::robot_odm robot_odm,robot_odm0;
-        command_generation::robot_odm goal_odm;
+        obstacle_detection::filted_objects_info obj_info;
+        odometry_publish::robot_odm robot_odm,robot_odm0;
+        odometry_publish::robot_odm goal_odm;
         float vrt,wrt;
     	const float f=350.505;
 		const int width=672;
@@ -58,9 +59,9 @@ class command_generator {
 
         //subscribe
         void subscribe_objects(void);
-        void objects_callback(const command_generation::filted_objects_info::ConstPtr& msg);
+        void objects_callback(const obstacle_detection::filted_objects_info::ConstPtr& msg);
         void subscribe_odometry(void);
-        void odometry_callback(const command_generation::robot_odm::ConstPtr& msg);
+        void odometry_callback(const odometry_publish::robot_odm::ConstPtr& msg);
         //set obstacle status
         bool dicriminate_obstacle(void);
         //set obstacle data

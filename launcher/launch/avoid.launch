@@ -5,7 +5,7 @@
 <!--  <node pkg="obst_avoid" name="estimate_velocity_class_test" type="estimate_velocity_class_test"/> -->
   <!-- <node pkg="command_generation" name="command_generation" type="command_generation" output="screen"/> -->
   <!-- <node pkg="command_generation" name="command_generation_apf" type="command_generation_apf" output="screen" respawn="true" /> -->
-  <node pkg="command_generation" name="command_generation_vfh" type="command_generation_vfh" output="screen" respawn="true" 
+  <node pkg="command_generation" name="command_generation_vfh" type="command_generation_vfh" output="screen" respawn="true" >
     <param name="avoid_type_flag" value="true"/>
   <node/>
   <node pkg="odometry_publish" name="odometry_publisher" type="odometry_publisher"  />

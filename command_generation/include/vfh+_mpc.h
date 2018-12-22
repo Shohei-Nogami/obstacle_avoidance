@@ -3,7 +3,7 @@
 
 #include<vfh+.h>
 #include<fstream>
-#include<command_generation/robot_odm.h>
+#include<odometry_publish/robot_odm.h>
 #include<nav_msgs/Odometry.h>
 
 class VFH_MPC : public vfh

@@ -9,26 +9,14 @@
 #include<cv_bridge/cv_bridge.h>
 #include<image_transport/image_transport.h>
 
-//#include" obstacle_detection/point3d.h"
-//#include" obstacle_detection/vel3d.h"
-//#include" obstacle_detection/img_point.h"
-//#include" obstacle_detection/points.h"
 #include<obstacle_detection/matching.h>
-//#include" obstacle_detection/point2i.h"
-//#include" obstacle_detection/cluster_element.h"
 #include<obstacle_detection/cluster.h>
-//#include" obstacle_detection/cluster_point.h"
 #include<obstacle_detection/cluster_with_vel.h>
-//#include" obstacle_detection/object_info.h"
 #include<obstacle_detection/objects_info.h>
 #include<time_class.h>
 #include<image_class.h>
 #include<fstream>//file input output
 #include <Eigen/Dense>
-//#include <pcl/visualization/cloud_viewer.h>
-//#include <pcl/io/pcd_io.h>  
-//#include <pcl/point_types.h> 
-//#include <iostream>
 class culculate_centroid{
 	private:
 		ros::NodeHandle nh_cluster,nh_optflw,nh_match,nh_pubpcl,nh_pub1,nh_pub2,nh_pub3;

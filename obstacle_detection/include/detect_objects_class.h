@@ -1,3 +1,6 @@
+#ifndef INCLUDE_DETECT_OBJECTS_CLASS
+#define INCLUDE_DETECT_OBJECTS_CLASS
+
 #include"ros/ros.h"
 #include <ros/callback_queue.h>
 #include <sensor_msgs/PointCloud2.h>
@@ -14,26 +17,11 @@
 #include <pcl/segmentation/extract_clusters.h>
 #include <std_msgs/Empty.h>
 
-//#include"struct_index.h"
-//#include"opticalflow_data.h"
-
-//#include"obstacle_detection/point3d.h"
-//#include"obstacle_detection/vel3d.h"
-//#include"obstacle_detection/img_point.h"
-//#include"obstacle_detection/points.h"
-//#include"obstacle_detection/matching.h"
 #include<time_class.h>
 #include<image_class.h>
-//#include"obstacle_detection/point2i.h"
-//#include"obstacle_detection/cluster_element.h"
 #include<obstacle_detection/cluster.h>
-//#include"obstacle_detection/cluster_point.h"
 #include<odometry_class.h>
 
-//#include <pcl/visualization/cloud_viewer.h>
-//#include <pcl/io/pcd_io.h>
-//#include <pcl/point_types.h>
-//#include <iostream>
 class detect_objects{
 	private:
 		ros::NodeHandle nh_pub1,nh_pub2,nh_pub3,nh_pub4;
@@ -130,3 +118,5 @@ class detect_objects{
 	//---publish response
 		void publish_response(void);
 };
+
+#endif

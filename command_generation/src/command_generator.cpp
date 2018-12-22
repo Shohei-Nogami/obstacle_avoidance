@@ -152,7 +152,7 @@ void command_generator::subscribe_objects(void)
 {
 	queue.callOne(ros::WallDuration(1));
 }
-void command_generator::objects_callback(const command_generation::filted_objects_info::ConstPtr& msg)
+void command_generator::objects_callback(const obstacle_detection::filted_objects_info::ConstPtr& msg)
 {
 	obj_info.objs = msg->objs;
 }
@@ -160,7 +160,7 @@ void command_generator::subscribe_odometry(void)
 {
 	queue2.callOne(ros::WallDuration(100));
 }
-void command_generator::odometry_callback(const command_generation::robot_odm::ConstPtr& msg)
+void command_generator::odometry_callback(const odometry_publish::robot_odm::ConstPtr& msg)
 {
 	robot_odm.x=msg->x;
 	robot_odm.y=msg->y;

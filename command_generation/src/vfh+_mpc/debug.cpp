@@ -14,6 +14,7 @@ void VFH_MPC::set_pub_mpc_debug_images(const cv::Point2i& xrit0)
 			uint8_t pot=pd[w0];
 			if(pot>0)
 			{
+				// std::cout<<"colored \n";
 				p3d[w0][2]=255;
 			}
 			else
@@ -26,19 +27,19 @@ void VFH_MPC::set_pub_mpc_debug_images(const cv::Point2i& xrit0)
 	mpc_debug_image.at<cv::Vec3b>(xrit0.y, xrit0.x)[0] = 255;
 	mpc_debug_image.at<cv::Vec3b>(xrit0.y, xrit0.x)[1] = 255;
 	mpc_debug_image.at<cv::Vec3b>(xrit0.y, xrit0.x)[2] = 255;
-	std::cout<<"draw static obstacle\n";
-	mpc_debug_image.at<cv::Vec3b>(xgi.y,xgi.x)[0] =0;
-	mpc_debug_image.at<cv::Vec3b>(xgi.y,xgi.x)[1] =0;
-	mpc_debug_image.at<cv::Vec3b>(xgi.y,xgi.x)[2] =255;
+	// std::cout<<"draw static obstacle\n";
+	mpc_debug_image.at<cv::Vec3b>(xgi.y,xgi.x)[0] =255;
+	mpc_debug_image.at<cv::Vec3b>(xgi.y,xgi.x)[1] =255;
+	mpc_debug_image.at<cv::Vec3b>(xgi.y,xgi.x)[2] =0;
 	draw_mv_obst();
-	std::cout<<"draw dynamic obstacle\n";
+	// std::cout<<"draw dynamic obstacle\n";
 
 	publish_debug_image(mpc_debug_image);
 	//ROS_INFO("published_debug_image\n");	
 }
 void VFH_MPC::draw_mv_obst(void) {
 	//std::cout<<"void VFH_MPC::draw_mv_obst(void){\n";
-	std::cout<<"mv_obsts.size():"<<mv_obsts.size()<<"\n";
+	// std::cout<<"mv_obsts.size():"<<mv_obsts.size()<<"\n";
 	for (int n = 0; n < mv_obsts.size(); n++) {
 		cv::Point2i pti;
 		//std::cout<<"mv_obsts[n].data.size():"<<mv_obsts[n].data.size()<<"\n";
@@ -50,11 +51,16 @@ void VFH_MPC::draw_mv_obst(void) {
 			pt.y += mv_obsts[n].mvy;
 			pt.x += mv_obsts[n].mvxt;
 			pt.y += mv_obsts[n].mvyt;
-			//std::cout<<"pt:"<<pt<<"\n";
+			// std::cout<<"pt:"<<pt<<"\n";
 			if (trans_point(pt, pti))
 			{
-				//std::cout<<"pti:"<<pti<<"\n";
+				// std::cout<<"pti:"<<pti<<"\n";
+				// std::cout<<"W,H:"<<mpc_debug_image.cols<<","<<mpc_debug_image.rows<<std::endl;
+				// std::cout<<"W,H:"<<map_wi<<","<<map_hi<<std::endl;
+				
+				mpc_debug_image.at<cv::Vec3b>(pti.y, pti.x)[0] = 0;
 				mpc_debug_image.at<cv::Vec3b>(pti.y, pti.x)[1] = 255;
+				mpc_debug_image.at<cv::Vec3b>(pti.y, pti.x)[2] = 0;
 			}
 		}
 	}
@@ -68,17 +74,18 @@ bool VFH_MPC::check_collision(const cv::Point2f xrf00) {
 		for (int k = 0; k < mv_obsts[n].data.size(); k++)
 		{
 			cv::Point2f pt = mv_obsts[n].data[k];
-			//std::cout<<"pt0:"<<pt<<"\n";
+			// std::cout<<"pt0:"<<pt<<"\n";
 			pt.x -= cx;
 			pt.y -= cy;
 			pt.x += mv_obsts[n].mvx;
 			pt.y += mv_obsts[n].mvy;
 			pt.x += mv_obsts[n].mvxt;
 			pt.y += mv_obsts[n].mvyt;
-			//std::cout<<"pt:"<<pt<<"\n";
+			// std::cout<<"pt,xrf00:"<<pt<<","<<xrf00<<"\n";
 			float dis = std::sqrt((xrf00.x - pt.x)*(xrf00.x - pt.x) + (xrf00.y - pt.y)*(xrf00.y - pt.y));
 			if (dis <= rr + cr)
 			{
+				// std::cout<<"dis:"<<dis<<"\n";
 				return true;
 			}
 		}
@@ -148,6 +155,7 @@ void VFH_MPC::draw_mpc_path_mat(void)
 		//MPC
 		ROS_INFO("get_speed");
 		v0 = get_speed(xrf,vrt);
+		//v0=vrt;
 		std::cout<<"v0:"<<v0<<"\n";
 		ROS_INFO("clear_move_data");
 		clear_move_data();
@@ -158,10 +166,10 @@ void VFH_MPC::draw_mpc_path_mat(void)
 			ROS_INFO("collision...\n");
 			break;
 		}
-		
 		//ロボットの命令速度算出
 		float w, v,angle;
 		float cost=0;
+		v=v0;
 		ROS_INFO("set_command_vel...\n");
 		set_polar_histogram(grid_map_t,xrf,th_t);
 		angle = select_angle(xrf,cost,th_t);

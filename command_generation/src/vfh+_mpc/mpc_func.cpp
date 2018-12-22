@@ -55,7 +55,7 @@ float VFH_MPC::select_angle(const cv::Point2f& xrft,float& cost,float& th_t0) {
 	for (int i = 0; i < ph.size(); i++) {
 		//std::cout << "ph[" << i << "]:" << ph[i] << "\n";
 		if (block_d > ph[i]) {
-			continue;
+				continue;
 		}
 		float th_p = std::atan2((xgf.y - xrft.y), (xgf.x - xrft.x)) * 180 / M_PI;
 		float th_s = th_t0 * 180 / M_PI + i * reso_range - (max_range - min_range) / 2;
@@ -88,7 +88,7 @@ double VFH_MPC::culc_cost(cv::Point2f& xrft0, const float v0, const float& time_
 {
 	//debug 用
 	ros::NodeHandle n;
-	ros::Rate rate(1000);
+	ros::Rate rate(500);
 	//set data
 	double sum_cost=0;
 	float tr=time_range;
@@ -112,7 +112,7 @@ double VFH_MPC::culc_cost(cv::Point2f& xrft0, const float v0, const float& time_
 		//set grid map(t)
 		grid_map_t = grid_map.clone();
 		
-		ROS_INFO("add_mv_pot...while\n");
+		// ROS_INFO("add_mv_pot...while\n");
 		//add_mv_grid();
 		add_mv_grid(grid_map_t);		
 		//ゴールセルに到達したら終了
@@ -134,29 +134,30 @@ double VFH_MPC::culc_cost(cv::Point2f& xrft0, const float v0, const float& time_
 		// ROS_INFO("set_grad...while\n");
 		float w, v,angle;
 		float cost = 0;
+		v=v0;
 		//set_polar_histogram();
 		set_polar_histogram(grid_map_t,xrft,th_t0);
 		angle = select_angle(xrft,cost,th_t0);
 		set_command_vel(th_t0,angle, v, w);
-		std::cout<<"set_command_vel(select_angle(cost,th_t0), v, w);\n";
+		// std::cout<<"set_command_vel(select_angle(cost,th_t0), v, w);\n";
 		//add cost
 		sum_cost += cost;
 
-		std::cout<<"float l = v * mv_t;\n";
+		// std::cout<<"float l = v * mv_t;\n";
 		float l = v * mv_t;
 		th_t0 = th_t0 + w * mv_t;
 		xrft.x = xrft.x + l * cos(th_t0);
 		xrft.y = xrft.y + l * sin(th_t0);
 		//��Q���̈ړ�
-		ROS_INFO("move_obstacle_data...while\n");
+		// ROS_INFO("move_obstacle_data...while\n");
 		move_obstacle_data(mv_t);
 		//debug
 		// ROS_INFO("set_pub_mpc_debug_images()\n");
-		set_pub_mpc_debug_images(xrit);	
+		// set_pub_mpc_debug_images(xrit);	
 		//rate.sleep();
 
 		tr -= mv_t;
-		ROS_INFO("end...while\n");
+		// ROS_INFO("end...while\n");
 	}
 	return sum_cost;
 }
@@ -207,16 +208,17 @@ float VFH_MPC::get_speed(const cv::Point2f& xrft0, const float& vrt00)
 		//if(grad_v>0){//cost0<cost1
 		//std::cout<<"vrt("<<vrt0<<","<<vrt1<<")\n";
 		//std::cout<<"cost("<<cost0<<","<<cost1<<")\n";
-		// ROS_INFO("cost0,cost1:(%f,%f)\n",cost0,cost1);
+		ROS_INFO("vrt0,vrt1:(%f,%f)\n",vrt0,vrt1);
+		ROS_INFO("cost0,cost1:(%f,%f)\n",cost0,cost1);
 		std::cout << "opt_v(" << opt_v << ")\n";
-		if (cost0 <= cost1) {
+		if (cost0 < cost1) {
 			if (vrt0 >= max_v) {
 				return max_v;
 			}
 			if (vrt0 <= min_v) {
 				return min_v;
 			}
-			//ROS_INFO("vrt0<vrt1:(%f,%f)\n",vrt0,vrt1);
+			ROS_INFO("vrt0<vrt1:(%f,%f)\n",vrt0,vrt1);
 			opt_v = vrt0;
 			vrt1 = vrt0;
 			cost1 = cost0;
@@ -231,7 +233,7 @@ float VFH_MPC::get_speed(const cv::Point2f& xrft0, const float& vrt00)
 			if (vrt1 <= min_v) {
 				return min_v;
 			}
-			//ROS_INFO("vrt0>vrt1:(%f,%f)\n",vrt0,vrt1);
+			ROS_INFO("vrt0>vrt1:(%f,%f)\n",vrt0,vrt1);
 			opt_v = vrt1;
 			vrt0 = vrt1;
 			cost0 = cost1;

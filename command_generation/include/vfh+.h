@@ -57,6 +57,7 @@ class vfh{
 		cv::Point2i& get_posi(void);
 		cv::Point2f& get_goal_posf(void);
 		cv::Point2i& get_goal_posi(void);
+		float& get_reso(void);
 		float& get_ori(void);
 		float& get_vel(void);
 		float& get_ang_vel(void);
@@ -70,7 +71,7 @@ class vfh{
 		//coordinate_transform.cpp
 		bool trans_point(const cv::Point2f& pt,cv::Point2i& pti);
 		bool trans_point(const cv::Point2f& pt,cv::Point2i& pti,cv::Point2f& ptf);
-		void trans_point_f_to_i(const cv::Point2f& ptf,cv::Point2i& pti);
+		bool trans_point_f_to_i(const cv::Point2f& ptf,cv::Point2i& pti);
         void trans_point_grid_to_polor(const int xg,const int yg,float& d,float& th);
 		void trans_point_grid_to_polor(const int xg,const int yg,const cv::Point2f xrft,float& d,float& th);
 		//grid_map.cpp

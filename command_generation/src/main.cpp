@@ -17,7 +17,7 @@ int main(int argc,char **argv)
 	//USED FUNCTION FLAG
 	bool USE_APF_MPC = false;
 	bool USE_VFH_MPC = true;
-
+	bool USE_SIMU =true;
 
 	//read launch param
 	ros::NodeHandle node_private("~");
@@ -32,11 +32,17 @@ int main(int argc,char **argv)
 	}
 	//first odometry 
 	std::cout << "waiting first odometry\n";
-	cgen.subscribe_odometry();
+	// cgen.subscribe_odometry();
 	
 	APF_MPC apf_mpc(W, H, reso);//10,10,0.1);
 	VFH_MPC vfh_mpc(W, H, reso);//10,10,0.1);
 
+	if(USE_SIMU){
+		PROCESS_SIMULATION(cgen,vfh_mpc);
+		std::cout << "SIMULATION END \n";
+		return 0;
+	}
+	
 	//init each class param
 	if (USE_APF_MPC) {
 		if (!cgen.setting_RobotExpCondition(apf_mpc, reso)) {
@@ -206,6 +212,7 @@ void PROCESS_SIMULATION(command_generator& cgen, VFH_MPC& vfh_mpc) {
 
 	//障害物セット
 	//静止障害物
+	std::cout<<"set static obstacles\n";
 	cv::Point2f obst_data=cv::Point2f(0.0,0.0);
 	cv::Point2f obst_data2=cv::Point2f(2.0,1.8);
 	cv::Point2f obst_data3=cv::Point2f(-1.0,1.0);
@@ -221,9 +228,10 @@ void PROCESS_SIMULATION(command_generator& cgen, VFH_MPC& vfh_mpc) {
 	vfh_mpc.set_static_obstacle_data(obst_data5);
 
 	//移動障害物
-	float wo=0.20;
-	float ho=0.2;
-	float reso=0.15;
+	float wo=0.30;
+	float ho=0.30;
+	float reso=vfh_mpc.get_reso();
+
 	int obst_size=(int)(wo/reso*2);
 	float vx=-0.0;
 	float vy=-0.20;
@@ -244,7 +252,7 @@ void PROCESS_SIMULATION(command_generator& cgen, VFH_MPC& vfh_mpc) {
 	vfh_mpc.end_set_mv_obstacle_data();
 	//ロボットパラメータセット
 	//center point
-	cv::Point2f cpt=cv::Point(0.0,0.0);
+	cv::Point2f cpt=cv::Point2f(0.0,0.0);
 	//goal point
 	cv::Point2f goal_pt=cv::Point2f(7.5-5,7.5-5);
 	//set_param
@@ -261,6 +269,6 @@ void PROCESS_SIMULATION(command_generator& cgen, VFH_MPC& vfh_mpc) {
 	vfh_mpc.set_command_limit(0.1);
 	// apf_mpc.set_mov_time(0.1);
 	vfh_mpc.set_mov_time(1);
-
+	std::cout<<"vfh_mpc.draw_mpc_path_mat();...\n";
 	vfh_mpc.draw_mpc_path_mat();
 }

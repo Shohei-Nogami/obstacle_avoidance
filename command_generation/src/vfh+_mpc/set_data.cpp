@@ -42,6 +42,7 @@ void VFH_MPC::clear_move_data(void)
 	}
 }
 void VFH_MPC::set_static_obstacle_data(const cv::Point2f& data) {
+	std::cout<<"set data: "<<data<<"\n";
 	set_obstacle_data(data);
 }
 int VFH_MPC::get_obst_num(void) {

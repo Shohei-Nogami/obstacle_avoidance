@@ -1,5 +1,10 @@
 #include<vfh+.h>
 
+float& vfh::get_reso(void){
+	return reso;
+}
+
+
 cv::Point2f& vfh::get_posf(void){
 	return xrf;
 }

@@ -5,14 +5,20 @@ bool vfh::trans_point(const cv::Point2f& pt,cv::Point2i& pti){
 	float map_ptx = map_wf/2 + (pt.x - cx);
 	float map_pty = map_hf/2 + ( -(pt.y - cy) );
 	
-	if(map_ptx<0 || map_ptx>map_wf)
-		return false;
+	// if(map_ptx<0 || map_ptx>map_wf)
+	// 	return false;
 		
-	if(map_pty<0 || map_pty>map_hf)
-		return false;
+	// if(map_pty<0 || map_pty>map_hf)
+	// 	return false;
 		
 	pti.x =	(int)(map_ptx/reso);
 	pti.y =	(int)(map_pty/reso);
+	
+	if(pti.x<0 || pti.x>=map_wi)
+		return false;
+		
+	if(pti.y<0 || pti.y>=map_hi)
+		return false;
 	
 	return true;
 	
@@ -24,25 +30,45 @@ bool vfh::trans_point(const cv::Point2f& pt,cv::Point2i& pti,cv::Point2f& ptf){
 	float map_ptx = map_wf/2 + ptf.x;
 	float map_pty = map_hf/2 - ptf.y;
 	
-	if(map_ptx<0 || map_ptx>map_wf)
+	
+	// if(map_ptx<0 || map_ptx>map_wf)
+	// 	return false;
+		
+	// if(map_pty<0 || map_pty>map_hf)
+	// 	return false;
+
+	pti.x = (int)(map_ptx/reso);
+	pti.y = (int)(map_pty/reso);
+	// std::cout<<"pti:"<<pti<<"\n";
+	if(pti.x<0 || pti.x>=map_wi)
 		return false;
 		
-	if(map_pty<0 || map_pty>map_hf)
+	if(pti.y<0 || pti.y>=map_hi)
 		return false;
-		
-	pti.x =	(int)(map_ptx/reso);
-	pti.y =	(int)(map_pty/reso);
 	
 	return true;
 	
 }
-void vfh::trans_point_f_to_i(const cv::Point2f& ptf,cv::Point2i& pti){
+bool vfh::trans_point_f_to_i(const cv::Point2f& ptf,cv::Point2i& pti){
 
 	float map_ptx = map_wf/2 + ptf.x;
 	float map_pty = map_hf/2 - ptf.y;
 	
+	// if(map_ptx<0 || map_ptx>map_wf)
+	// 	return false;
+		
+	// if(map_pty<0 || map_pty>map_hf)
+	// 	return false;
+
 	pti.x = (int)(map_ptx/reso);
 	pti.y = (int)(map_pty/reso);
+	if(pti.x<0 || pti.x>=map_wi)
+		return false;
+		
+	if(pti.y<0 || pti.y>=map_hi)
+		return false;
+
+	return true;
 
 }
 void vfh::trans_point_grid_to_polor(const int xg,const int yg,float& d,float& th){
